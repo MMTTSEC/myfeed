@@ -23,6 +23,10 @@ namespace MyFeed.Domain.Entities
             {
                 throw new ArgumentException("A user cannot send a DM to themselves.");
             }
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                throw new ArgumentException("DM message cannot be empty.");
+            }
         }
 
     }

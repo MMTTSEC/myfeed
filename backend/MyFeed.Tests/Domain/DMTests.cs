@@ -13,11 +13,18 @@ namespace MyFeed.Tests.Domain
         [Fact]
         public void CreatingDM_WithSameSenderAndReceiver_ThrowsException()
         {
-            int userId = 1;
-            string message = "Hello";
+            Assert.Throws<ArgumentException>(() =>
+            new DM(senderUserId: 1, receiverUserId: 1, "Hello")
+    );
+        }
 
-            Assert.Throws<ArgumentException>(() => new DM(userId, userId, message));
+        [Fact]
+        public void CreatingDM_WithEmptyMessage_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => new DM(1, 2, ""));
+
         }
         
+
     }
 }
