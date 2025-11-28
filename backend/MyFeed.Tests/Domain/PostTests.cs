@@ -31,5 +31,18 @@ namespace MyFeed.Tests.Domain
             );
         }
 
+        [Fact]
+        public void CreatingPost_withValidData_Succeeds()
+        {
+            var post = new Post(authorUserId: 1, receiverUserId: 2, "Valid Title", "Valid Body");
+            Assert.Equal(1, post.AuthorUserId);
+            Assert.Equal(2, post.ReceiverUserId);
+            Assert.Equal("Valid Title", post.Title);
+            Assert.Equal("Valid Body", post.Body);
+            Assert.True((DateTime.UtcNow - post.CreatedAt).TotalSeconds < 5); // CreatedAt is recent
+
+
+        }
+
     }
 }
