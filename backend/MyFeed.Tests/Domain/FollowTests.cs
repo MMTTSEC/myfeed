@@ -14,8 +14,8 @@ namespace MyFeed.Tests.Domain
         public void FollowingUser_CreatesFollowSuccessfully()
         {
             // Arrange
-            int followerUserId = 1;  
-            int followedUserId = 2;   
+            int followerUserId = 1;
+            int followedUserId = 2;
 
             // Act
             var follow = new Follow(followerUserId, followedUserId);
@@ -24,6 +24,12 @@ namespace MyFeed.Tests.Domain
             Assert.Equal(followerUserId, follow.FollowerId);
             Assert.Equal(followedUserId, follow.FolloweeId);
             Assert.True((DateTime.UtcNow - follow.CreatedAt).TotalSeconds < 5);
+        }
+
+        [Fact]
+        public void UserCannotFollowThemselves()
+        {
+            Assert.Throws<ArgumentException>(() => new Follow(1, 1));
         }
     }
 }

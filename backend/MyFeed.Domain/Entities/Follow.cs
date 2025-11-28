@@ -17,7 +17,10 @@ namespace MyFeed.Domain.Entities
             FollowerId = followerId;
             FolloweeId = followeeId;
             CreatedAt = DateTime.UtcNow;
+            if (followerId == followeeId)
+            {
+                throw new ArgumentException("A user cannot follow themselves.");
+            }
         }
-
     }
 }
