@@ -18,4 +18,13 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Application\" />
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyFeed.Domain\MyFeed.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
