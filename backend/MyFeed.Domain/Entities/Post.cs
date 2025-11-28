@@ -24,6 +24,12 @@ namespace MyFeed.Domain.Entities
             Title = title;
             Body = body;
             CreatedAt = DateTime.UtcNow;
+
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                throw new ArgumentException("Post body cannot be empty.");
+            }
+
         }
 
     }

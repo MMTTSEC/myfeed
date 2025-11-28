@@ -14,5 +14,13 @@ namespace MyFeed.Tests.Domain
             );
         }   
 
+        [Fact]
+        public void CreatingPost_WithEmptyBody_ThrowsNoException()
+        {
+            Assert.Throws<ArgumentException>(() =>
+                new Post(authorUserId: 1, receiverUserId: 2, "Hello", "")
+            );
+        }
+
     }
 }
