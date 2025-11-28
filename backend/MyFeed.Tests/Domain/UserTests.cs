@@ -27,5 +27,13 @@ namespace MyFeed.Tests.Domain
             Assert.Throws<ArgumentException>(() => new User("validuser", null!));
         }
 
+        [Fact]
+        public void CreatingUser_withValidData_Succeeds()
+        {
+            var user = new User("validuser", "validhash");
+            Assert.Equal("validuser", user.Username);
+            Assert.Equal("validhash", user.PasswordHash);
+        }  
+
     }
 }
