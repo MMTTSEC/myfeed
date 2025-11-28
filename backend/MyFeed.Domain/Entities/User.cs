@@ -18,6 +18,10 @@ namespace MyFeed.Domain.Entities
             }
             Username = username;
             PasswordHash = passwordHash;
+            if (Username.Length > 50)
+            {
+                throw new ArgumentException("Username cannot be longer than 50 characters.", nameof(username));
+            }
         }
     }
 }
