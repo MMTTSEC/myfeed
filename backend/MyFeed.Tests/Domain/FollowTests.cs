@@ -11,7 +11,7 @@ namespace MyFeed.Tests.Domain
     public class FollowTests
     {
         [Fact]
-        public void FollowingUser_CreatesFollowSuccessfully()
+        public void CreatingFollow_withValidData_Succeeds()
         {
             // Arrange
             int followerUserId = 1;
@@ -27,7 +27,7 @@ namespace MyFeed.Tests.Domain
         }
 
         [Fact]
-        public void UserCannotFollowThemselves()
+        public void CreatingFollow_WithSameFollowerAndFollowee_ThrowsException()
         {
             Assert.Throws<ArgumentException>(() => new Follow(1, 1));
         }
