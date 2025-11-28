@@ -7,18 +7,10 @@ namespace MyFeed.Tests.Domain
     public class PostTests
     {
         [Fact]
-        public void CreatingPost_WithAuthorEqualsReceiver_ThrowsException()
+        public void CreatingPost_WithEmptyBody_ThrowsArgumentException()
         {
             Assert.Throws<ArgumentException>(() =>
-                new Post(authorUserId: 1, receiverUserId: 1, "Hello", "Body")
-            );
-        }   
-
-        [Fact]
-        public void CreatingPost_WithEmptyBody_ThrowsNoException()
-        {
-            Assert.Throws<ArgumentException>(() =>
-                new Post(authorUserId: 1, receiverUserId: 2, "Hello", "")
+                new Post(authorUserId: 1, title: "Hello", body: "")
             );
         }
 
@@ -27,21 +19,18 @@ namespace MyFeed.Tests.Domain
         {
             string longTitle = new string('a', 101);
             Assert.Throws<ArgumentException>(() =>
-                new Post(authorUserId: 1, receiverUserId: 2, longTitle, "Body")
+                new Post(authorUserId: 1, title: longTitle, body: "Body")
             );
         }
 
         [Fact]
         public void CreatingPost_withValidData_Succeeds()
         {
-            var post = new Post(authorUserId: 1, receiverUserId: 2, "Valid Title", "Valid Body");
+            var post = new Post(authorUserId: 1, title: "Valid Title", body: "Valid Body");
             Assert.Equal(1, post.AuthorUserId);
-            Assert.Equal(2, post.ReceiverUserId);
             Assert.Equal("Valid Title", post.Title);
             Assert.Equal("Valid Body", post.Body);
             Assert.True((DateTime.UtcNow - post.CreatedAt).TotalSeconds < 5); // CreatedAt is recent
-
-
         }
 
     }
