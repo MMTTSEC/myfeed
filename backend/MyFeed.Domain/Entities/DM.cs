@@ -27,6 +27,10 @@ namespace MyFeed.Domain.Entities
             {
                 throw new ArgumentException("DM message cannot be empty.");
             }
+            if (message.Length > 1000)
+            {
+                throw new ArgumentException("DM message cannot be longer than 1000 characters.");
+            }
         }
 
     }

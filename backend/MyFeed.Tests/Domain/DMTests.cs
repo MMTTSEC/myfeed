@@ -36,6 +36,13 @@ namespace MyFeed.Tests.Domain
             Assert.True((DateTime.UtcNow - dm.CreatedAt).TotalSeconds < 5);
         }
 
+        [Fact]
+        public void CreatingDM_MaxMessageLength_ThrowsException()
+        {
+            string longMessage = new string('a', 1001); 
+            Assert.Throws<ArgumentException>(() => new DM(1, 2, longMessage));
+
+        }
 
 
     }
