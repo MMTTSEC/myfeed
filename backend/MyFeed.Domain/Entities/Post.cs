@@ -29,6 +29,10 @@ namespace MyFeed.Domain.Entities
             {
                 throw new ArgumentException("Post body cannot be empty.");
             }
+            if (title.Length > 100)
+            {
+                throw new ArgumentException("Post title cannot be longer than 100 characters.");
+            }
 
         }
 

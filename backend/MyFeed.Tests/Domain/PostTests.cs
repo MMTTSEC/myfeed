@@ -22,5 +22,14 @@ namespace MyFeed.Tests.Domain
             );
         }
 
+        [Fact]
+        public void CreatingPost_WithTitleLongerThan100Chars_ThrowsException()
+        {
+            string longTitle = new string('a', 101);
+            Assert.Throws<ArgumentException>(() =>
+                new Post(authorUserId: 1, receiverUserId: 2, longTitle, "Body")
+            );
+        }
+
     }
 }
