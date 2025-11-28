@@ -22,6 +22,10 @@ namespace MyFeed.Domain.Entities
             {
                 throw new ArgumentException("Username cannot be longer than 50 characters.", nameof(username));
             }
+            if (string.IsNullOrWhiteSpace(passwordHash))
+                throw new ArgumentException("Password hash cannot be empty.");
+
+
         }
     }
 }

@@ -20,5 +20,12 @@ namespace MyFeed.Tests.Domain
             Assert.Throws<ArgumentException>(() => new User(longUsername, "somehash"));
         }
 
+        [Fact]
+        public void CreatingUser_WithEmptyOrNullPasswordHash_ThrowsException()
+        {
+            Assert.Throws<ArgumentException>(() => new User("validuser", ""));
+            Assert.Throws<ArgumentException>(() => new User("validuser", null!));
+        }
+
     }
 }
