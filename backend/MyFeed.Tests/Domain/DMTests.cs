@@ -24,7 +24,19 @@ namespace MyFeed.Tests.Domain
             Assert.Throws<ArgumentException>(() => new DM(1, 2, ""));
 
         }
-        
+
+        [Fact]
+        public void CreatingDM_withValidData_Succeeds()
+        {
+            var dm = new DM(1, 2, "Hello!");
+
+            Assert.Equal(1, dm.SenderUserId);
+            Assert.Equal(2, dm.ReceiverUserId);
+            Assert.Equal("Hello!", dm.Message);
+            Assert.True((DateTime.UtcNow - dm.CreatedAt).TotalSeconds < 5);
+        }
+
+
 
     }
 }
