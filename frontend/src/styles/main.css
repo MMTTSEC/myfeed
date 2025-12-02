@@ -68,3 +68,19 @@ body {
   font-weight: 400;
   color: var(--color-white);
 }
+
+/* Typography */
+h1 {
+  font-size: var(--font-size-header);
+  font-weight: 700;
+}
+
+h2 {
+  font-size: var(--font-size-subheader);
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+p {
+  font-size: var(--font-size-text);
+}
