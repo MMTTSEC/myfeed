@@ -89,3 +89,32 @@ p {
 .bi {
   font-size: 20px
 }
+
+/* Buttons */
+button {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-gray-dark);
+  font-size: var(--font-size-misc);
+  padding: var(--spacing-standard) var(--spacing-big);
+  border: none;
+  border-radius: var(--border-radius-standard);
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-small);
+
+  transition: 0.5s ease-in-out;
+} 
+
+button:hover {
+  background-color: var(--color-gray);
+  transition: 0.5s ease-in-out;
+}
+
+button.large-button {
+  min-width: 100px;
+  flex-direction: row;
+}
