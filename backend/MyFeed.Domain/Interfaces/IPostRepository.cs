@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MyFeed.Domain.Entities;
+
 namespace MyFeed.Domain.Interfaces
 {
-    internal interface IPostRepository
+    public interface IPostRepository
     {
+        Task AddAsync(Post post);
     }
 }
