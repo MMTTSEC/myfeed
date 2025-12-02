@@ -19,13 +19,17 @@ namespace MyFeed.Domain.Entities
             Body = body;
             CreatedAt = DateTime.UtcNow;
 
-            if (string.IsNullOrWhiteSpace(body))
+            if (string.IsNullOrWhiteSpace(title))
             {
-                throw new ArgumentException("Post body cannot be empty.");
+                throw new ArgumentException("Post title cannot be empty.", nameof(title));
             }
             if (title.Length > 100)
             {
-                throw new ArgumentException("Post title cannot be longer than 100 characters.");
+                throw new ArgumentException("Post title cannot be longer than 100 characters.", nameof(title));
+            }
+            if (string.IsNullOrWhiteSpace(body))
+            {
+                throw new ArgumentException("Post body cannot be empty.", nameof(body));
             }
 
         }
