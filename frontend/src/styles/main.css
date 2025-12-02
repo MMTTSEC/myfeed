@@ -13,10 +13,16 @@
   /* Graphic Profile */
   /* Colors */
   --color-background-primary: #0B0B0B;
+  --color-background-primary-gradient: linear-gradient(90deg, rgba(11, 11, 11, 1) 20%, rgba(34, 34, 34, 1) 50%, rgba(11, 11, 11, 1) 80%);
   --color-background-secondary: #222222;
+  --color-background-tertiary: #FAFAFA;
 
   --color-primary: #A7CA35;
   --color-primary-hover: #718E12;
+  --color-primary-gradient-top-to-bottom: linear-gradient(180deg, rgba(167, 202, 53, 1) 10%, rgba(11, 11, 11, 0) 100%);
+  --color-primary-gradient-right-to-left: linear-gradient(270deg, rgba(167, 202, 53, 1) 10%, rgba(11, 11, 11, 0) 100%);
+  --color-primary-gradient-bottom-to-top: linear-gradient(0deg, rgba(167, 202, 53, 1) 10%, rgba(11, 11, 11, 0) 100%);
+  --color-primary-gradient-left-to-right: linear-gradient(90deg, rgba(167, 202, 53, 1) 10%, rgba(11, 11, 11, 0) 100%);
     
   --color-white: #FFFFFF;
   --color-gray: #777777;
@@ -47,6 +53,8 @@
 
 body {
   background-color: var(--color-background-primary);
+  background: var(--color-background-primary-gradient);
   font-family: var(--font-primary);
   font-weight: 400;
+  color: var(--color-white);
 }
