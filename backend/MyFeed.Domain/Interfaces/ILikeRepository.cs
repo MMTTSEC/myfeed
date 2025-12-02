@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyFeed.Domain.Interfaces
 {
-    internal class Class1
+    internal interface ILikeRepository
     {
     }
 }
