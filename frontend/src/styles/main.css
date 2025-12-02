@@ -43,6 +43,12 @@
   --font-size-text: 14px;
   --font-size-misc: 12px;
 
+  /* Spacing */
+  --spacing-large: 25px;
+  --spacing-big: 15px;
+  --spacing-standard: 10px;
+  --spacing-small: 5px;
+
   /* Border-radius */
   --border-radius-big: 10px;
   --border-radius-standard: 5px;
