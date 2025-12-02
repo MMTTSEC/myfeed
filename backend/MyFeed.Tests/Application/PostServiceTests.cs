@@ -1,49 +1,78 @@
-﻿using System;
+﻿using Moq;
+using MyFeed.Domain.Entities;
+using MyFeed.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using MyFeed.Domain.Entities;
+using MyFeed.Application.Services;
 
-namespace MyFeed.Tests.Domain
+namespace MyFeed.Tests.Application
 {
-    public class DMTests
+    public class PostServiceTests
     {
         [Fact]
-        public void CreatingDM_WithSameSenderAndReceiver_ThrowsException()
+        public async Task CreatePost_AuthorDoesNotExist_ThrowsException()
         {
-            Assert.Throws<ArgumentException>(() =>
-            new DM(senderUserId: 1, receiverUserId: 1, "Hello")
-    );
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync((User?)null);
+
+            var postRepo = new Mock<IPostRepository>();
+            var svc = new PostService(postRepo.Object, userRepo.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                svc.CreatePostAsync(1, "Title", "Body")
+            );
         }
 
         [Fact]
-        public void CreatingDM_WithEmptyMessage_ThrowsException()
+        public async Task CreatePost_ValidData_CallsRepositoryAdd()
         {
-            Assert.Throws<ArgumentException>(() => new DM(1, 2, ""));
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new User("u", "h"));
 
+            var postRepo = new Mock<IPostRepository>();
+            var svc = new PostService(postRepo.Object, userRepo.Object);
+
+            await svc.CreatePostAsync(1, "Title", "Body");
+
+            postRepo.Verify(x => x.AddAsync(It.IsAny<Post>()), Times.Once);
         }
 
         [Fact]
-        public void CreatingDM_withValidData_Succeeds()
+        public async Task CreatePost_InvalidBody_DoesNotCallRepositoryAdd()
         {
-            var dm = new DM(1, 2, "Hello!");
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new User("u", "h"));
 
-            Assert.Equal(1, dm.SenderUserId);
-            Assert.Equal(2, dm.ReceiverUserId);
-            Assert.Equal("Hello!", dm.Message);
-            Assert.True((DateTime.UtcNow - dm.CreatedAt).TotalSeconds < 5);
+            var postRepo = new Mock<IPostRepository>();
+            var svc = new PostService(postRepo.Object, userRepo.Object);
+
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                svc.CreatePostAsync(1, "Title", "") // empty body -> Post throws
+            );
+
+            postRepo.Verify(x => x.AddAsync(It.IsAny<Post>()), Times.Never);
         }
+
+
 
         [Fact]
-        public void CreatingDM_MaxMessageLength_ThrowsException()
+        public async Task CreatePost_EmptyTitle_ThrowsArgumentException_AndDoesNotCallRepositoryAdd()
         {
-            string longMessage = new string('a', 1001); 
-            Assert.Throws<ArgumentException>(() => new DM(1, 2, longMessage));
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new User("u", "h"));
 
+            var postRepo = new Mock<IPostRepository>();
+            var svc = new PostService(postRepo.Object, userRepo.Object);
+
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                svc.CreatePostAsync(1, "", "Body")
+            );
+
+            postRepo.Verify(x => x.AddAsync(It.IsAny<Post>()), Times.Never);
         }
-
-
     }
 }
