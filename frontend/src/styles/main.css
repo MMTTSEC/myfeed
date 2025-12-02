@@ -84,3 +84,8 @@ h2 {
 p {
   font-size: var(--font-size-text);
 }
+
+/* Bootstrap icons */
+.bi {
+  font-size: 20px
+}
