@@ -4,9 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using MyFeed.Domain.Entities;
+
 namespace MyFeed.Domain.Interfaces
 {
-    internal interface IPostRepository
+    public interface IPostRepository
     {
+        Task<Post?> GetByIdAsync(int id);
+        Task<IEnumerable<Post>> GetPostsByUserAsync(int userId);   
+        Task<IEnumerable<Post>> GetFeedAsync(int userId);          
+        Task AddAsync(Post post);
     }
 }
