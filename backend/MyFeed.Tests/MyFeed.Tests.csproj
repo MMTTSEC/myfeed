@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyFeed.Domain\MyFeed.Domain.csproj" />
+    <ProjectReference Include="..\MyFeed.Application\MyFeed.Application.csproj" />
   </ItemGroup>
 
 </Project>
