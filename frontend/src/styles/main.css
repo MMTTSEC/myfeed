@@ -42,6 +42,10 @@
   --font-size-subheader: 16px;
   --font-size-text: 14px;
   --font-size-misc: 12px;
+
+  /* Border-radius */
+  --border-radius-big: 10px;
+  --border-radius-standard: 5px;
 }
 
 /* General Styling */
