@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 
 namespace MyFeed.Domain.Entities
 {
-    public class Post
+    public class Post : Entity
     {
         public int AuthorUserId { get; }
         public string Title { get; }
         public string Body { get; }
-        public DateTime CreatedAt { get; }
-        public Post(int authorUserId, string title, string body)
+        
+        public Post(int authorUserId, string title, string body) : base()
         {
             AuthorUserId = authorUserId;
             Title = title;
             Body = body;
-            CreatedAt = DateTime.UtcNow;
 
             if (string.IsNullOrWhiteSpace(title))
             {

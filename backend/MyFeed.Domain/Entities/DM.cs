@@ -6,18 +6,17 @@ using System.Threading.Tasks;
 
 namespace MyFeed.Domain.Entities
 {
-    public class DM
+    public class DM : Entity
     {
         public int SenderUserId { get; }
         public int ReceiverUserId { get; }
         public string Message { get; }
-        public DateTime CreatedAt { get; }
-        public DM(int senderUserId, int receiverUserId, string message)
+        
+        public DM(int senderUserId, int receiverUserId, string message) : base()
         {
             SenderUserId = senderUserId;
             ReceiverUserId = receiverUserId;
             Message = message;
-            CreatedAt = DateTime.UtcNow;
             
             if (senderUserId == receiverUserId)
             {

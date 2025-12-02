@@ -6,17 +6,15 @@ using System.Threading.Tasks;
 
 namespace MyFeed.Domain.Entities
 {
-    public class Follow
+    public class Follow : Entity
     {
         public int FollowerId { get; }
         public int FolloweeId { get; }
-        public DateTime CreatedAt { get; }
 
-        public Follow(int followerId, int followeeId)
+        public Follow(int followerId, int followeeId) : base()
         {
             FollowerId = followerId;
             FolloweeId = followeeId;
-            CreatedAt = DateTime.UtcNow;
             if (followerId == followeeId)
             {
                 throw new ArgumentException("A user cannot follow themselves.");

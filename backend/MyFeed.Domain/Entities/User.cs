@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace MyFeed.Domain.Entities
 {
-    public class User
+    public class User : Entity
     {
         public string Username { get; }
         public string PasswordHash { get; }
-        public User(string username, string passwordHash)
+        
+        public User(string username, string passwordHash) : base()
         {
             if (string.IsNullOrWhiteSpace(username))
             {

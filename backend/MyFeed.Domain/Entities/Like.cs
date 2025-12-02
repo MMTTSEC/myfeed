@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace MyFeed.Domain.Entities
 {
-    public class Like
+    public class Like : Entity
     {   
         public int UserId { get; }
         public int PostId { get; }
-        public DateTime CreatedAt { get; }
-        public Like(int userId, int postId)
+        
+        public Like(int userId, int postId) : base()
         {
             UserId = userId;
             PostId = postId;
-            CreatedAt = DateTime.UtcNow;
         }
     }
 }
