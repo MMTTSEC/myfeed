@@ -112,4 +112,3 @@ namespace MyFeed.Tests.Application
         }
     }
 }
-
