@@ -75,6 +75,32 @@ body {
   color: var(--color-white);
 }
 
+main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+main section.left-column {
+  width: 200px;
+  min-height: 100vh;
+  margin-right: var(--spacing-large);
+}
+
+main section.center-column {
+  background-color: var(--color-background-primary);
+  width: 600px;
+  min-height: 100vh;
+}
+
+main section.right-column {
+  width: 200px;
+  min-height: 100vh;
+  margin-left: var(--spacing-large);
+}
+
 /* Typography */
 h1 {
   font-size: var(--font-size-header);

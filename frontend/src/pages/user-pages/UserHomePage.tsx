@@ -4,6 +4,14 @@ UserHomePage.route = {
 
 export default function UserHomePage() {
   return <>
-    <h1>Home</h1>
+    <section className="left-column">
+
+    </section>
+    <section className="center-column">
+
+    </section>
+    <section className="right-column">
+      
+    </section>
   </>;
 }
