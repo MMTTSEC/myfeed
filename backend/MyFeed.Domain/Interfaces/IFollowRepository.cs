@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MyFeed.Domain.Entities;
 
 namespace MyFeed.Domain.Interfaces
 {
-    internal interface IFollowRepository
+    public interface IFollowRepository
     {
+        Task AddAsync(Follow follow);
+        Task RemoveAsync(int followerId, int followeeId);
+        Task<bool> ExistsAsync(int followerId, int followeeId);
+        Task<IEnumerable<int>> GetFolloweeIdsAsync(int followerId);
     }
 }
