@@ -148,6 +148,7 @@ figure.logo a:hover {
 h1 {
   font-size: var(--font-size-header);
   font-weight: 700;
+  color: var(--color-primary);
 }
 
 h2 {
