@@ -97,6 +97,76 @@ namespace MyFeed.Tests.Application
 
             followRepo.Verify(x => x.AddAsync(It.IsAny<Follow>()), Times.Never);
         }
+
+        [Fact]
+        public async Task UnfollowUser_WithValidData_CallsRepositoryRemove()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new User("follower", "hash"));
+            userRepo.Setup(x => x.GetByIdAsync(2)).ReturnsAsync(new User("followee", "hash"));
+
+            var followRepo = new Mock<IFollowRepository>();
+            followRepo.Setup(x => x.ExistsAsync(1, 2)).ReturnsAsync(true);
+
+            var svc = new FollowService(followRepo.Object, userRepo.Object);
+
+            await svc.UnfollowUserAsync(1, 2);
+
+            followRepo.Verify(x => x.RemoveAsync(1, 2), Times.Once);
+        }
+
+        [Fact]
+        public async Task UnfollowUser_FollowerDoesNotExist_ThrowsException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync((User?)null);
+            userRepo.Setup(x => x.GetByIdAsync(2)).ReturnsAsync(new User("followee", "hash"));
+
+            var followRepo = new Mock<IFollowRepository>();
+            var svc = new FollowService(followRepo.Object, userRepo.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                svc.UnfollowUserAsync(1, 2)
+            );
+
+            followRepo.Verify(x => x.RemoveAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task UnfollowUser_FolloweeDoesNotExist_ThrowsException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new User("follower", "hash"));
+            userRepo.Setup(x => x.GetByIdAsync(2)).ReturnsAsync((User?)null);
+
+            var followRepo = new Mock<IFollowRepository>();
+            var svc = new FollowService(followRepo.Object, userRepo.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                svc.UnfollowUserAsync(1, 2)
+            );
+
+            followRepo.Verify(x => x.RemoveAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task UnfollowUser_NotFollowing_ThrowsException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new User("follower", "hash"));
+            userRepo.Setup(x => x.GetByIdAsync(2)).ReturnsAsync(new User("followee", "hash"));
+
+            var followRepo = new Mock<IFollowRepository>();
+            followRepo.Setup(x => x.ExistsAsync(1, 2)).ReturnsAsync(false);
+
+            var svc = new FollowService(followRepo.Object, userRepo.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                svc.UnfollowUserAsync(1, 2)
+            );
+
+            followRepo.Verify(x => x.RemoveAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+        }
     }
 }
 

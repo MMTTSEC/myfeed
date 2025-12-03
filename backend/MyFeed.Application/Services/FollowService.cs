@@ -34,6 +34,23 @@ namespace MyFeed.Application.Services
             var follow = new Follow(followerId, followeeId);
             await _followRepo.AddAsync(follow);
         }
+
+        public async Task UnfollowUserAsync(int followerId, int followeeId)
+        {
+            var follower = await _userRepo.GetByIdAsync(followerId);
+            if (follower == null)
+                throw new InvalidOperationException("Follower not found.");
+
+            var followee = await _userRepo.GetByIdAsync(followeeId);
+            if (followee == null)
+                throw new InvalidOperationException("Followee not found.");
+
+            var exists = await _followRepo.ExistsAsync(followerId, followeeId);
+            if (!exists)
+                throw new InvalidOperationException("Not following this user.");
+
+            await _followRepo.RemoveAsync(followerId, followeeId);
+        }
     }
 }
 
