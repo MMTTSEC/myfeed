@@ -35,6 +35,32 @@ namespace MyFeed.Application.Services
             var like = new Like(userId, postId);
             await _likeRepo.AddAsync(like);
         }
+
+        public async Task UnlikePostAsync(int userId, int postId)
+        {
+            var user = await _userRepo.GetByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException("User not found.");
+
+            var post = await _postRepo.GetByIdAsync(postId);
+            if (post == null)
+                throw new InvalidOperationException("Post not found.");
+
+            var exists = await _likeRepo.ExistsAsync(userId, postId);
+            if (!exists)
+                throw new InvalidOperationException("Like does not exist.");
+
+            await _likeRepo.RemoveAsync(userId, postId);
+        }
+
+        public async Task<int> GetLikeCountAsync(int postId)
+        {
+            var post = await _postRepo.GetByIdAsync(postId);
+            if (post == null)
+                throw new InvalidOperationException("Post not found.");
+
+            return await _likeRepo.CountForPostAsync(postId);
+        }
     }
 }
 
