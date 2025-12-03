@@ -167,6 +167,40 @@ namespace MyFeed.Tests.Application
 
             followRepo.Verify(x => x.RemoveAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
         }
+
+        [Fact]
+        public async Task GetFollowing_WithValidUser_ReturnsFolloweeIds()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(new User("user", "hash"));
+
+            var followRepo = new Mock<IFollowRepository>();
+            followRepo.Setup(x => x.GetFolloweeIdsAsync(1)).ReturnsAsync(new[] { 2, 3, 4 });
+
+            var svc = new FollowService(followRepo.Object, userRepo.Object);
+
+            var result = await svc.GetFollowingAsync(1);
+
+            Assert.NotNull(result);
+            Assert.Equal(3, result.Count());
+            Assert.Contains(2, result);
+            Assert.Contains(3, result);
+            Assert.Contains(4, result);
+        }
+
+        [Fact]
+        public async Task GetFollowing_UserDoesNotExist_ThrowsException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync((User?)null);
+
+            var followRepo = new Mock<IFollowRepository>();
+            var svc = new FollowService(followRepo.Object, userRepo.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                svc.GetFollowingAsync(1)
+            );
+        }
     }
 }
 

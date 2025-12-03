@@ -51,6 +51,15 @@ namespace MyFeed.Application.Services
 
             await _followRepo.RemoveAsync(followerId, followeeId);
         }
+
+        public async Task<IEnumerable<int>> GetFollowingAsync(int userId)
+        {
+            var user = await _userRepo.GetByIdAsync(userId);
+            if (user == null)
+                throw new InvalidOperationException("User not found.");
+
+            return await _followRepo.GetFolloweeIdsAsync(userId);
+        }
     }
 }
 
