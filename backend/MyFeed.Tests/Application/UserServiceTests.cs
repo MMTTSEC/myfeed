@@ -66,8 +66,65 @@ namespace MyFeed.Tests.Application
 
             userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
         }
-        
-       
+
+        [Fact]
+        public async Task GetUserById_UserExists_ReturnsUser()
+        {
+            var expectedUser = new User("testuser", "hash");
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync(expectedUser);
+
+            var svc = new UserService(userRepo.Object);
+
+            var result = await svc.GetUserByIdAsync(1);
+
+            Assert.NotNull(result);
+            Assert.Equal(expectedUser, result);
+            Assert.Equal("testuser", result.Username);
+        }
+
+        [Fact]
+        public async Task GetUserById_UserDoesNotExist_ReturnsNull()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByIdAsync(1)).ReturnsAsync((User?)null);
+
+            var svc = new UserService(userRepo.Object);
+
+            var result = await svc.GetUserByIdAsync(1);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetUserByUsername_UserExists_ReturnsUser()
+        {
+            var expectedUser = new User("testuser", "hash");
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByUsernameAsync("testuser")).ReturnsAsync(expectedUser);
+
+            var svc = new UserService(userRepo.Object);
+
+            var result = await svc.GetUserByUsernameAsync("testuser");
+
+            Assert.NotNull(result);
+            Assert.Equal(expectedUser, result);
+            Assert.Equal("testuser", result.Username);
+        }
+
+        [Fact]
+        public async Task GetUserByUsername_UserDoesNotExist_ReturnsNull()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByUsernameAsync("nonexistent")).ReturnsAsync((User?)null);
+
+            var svc = new UserService(userRepo.Object);
+
+            var result = await svc.GetUserByUsernameAsync("nonexistent");
+
+            Assert.Null(result);
+        }
+
     }
 }
 
