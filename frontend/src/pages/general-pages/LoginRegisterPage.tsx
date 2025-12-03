@@ -4,6 +4,14 @@ LoginRegisterPage.route = {
 
 export default function LoginRegisterPage() {
   return <>
-    <h1>Login/Register</h1>
+    <section className="center-column LoginRegisterPage">
+      <div className="main-container">
+        
+        <figure className="logo"><span>mF</span></figure>
+
+        <h1>Login/Register</h1>
+
+      </div>
+    </section>
   </>;
 }

@@ -104,6 +104,15 @@ main section.center-column {
   align-items: center;
 }
 
+main section.center-column .main-container {
+  width: 100%;
+  padding: var(--spacing-large);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 main section.right-column {
   width: 200px;
   min-height: 100vh;
@@ -183,6 +192,19 @@ button:hover {
 button.large-button {
   min-width: 100px;
   flex-direction: column;
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: 0.3s ease-in-out;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+  transition: 0.3s ease-in-out;
 }
 
 /* Forms */
