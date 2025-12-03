@@ -1,12 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MyFeed.Domain.Interfaces;
+using MyFeed.Domain.Entities;
 
 namespace MyFeed.Application.Services
 {
-    internal class DMService
+    public class DMService
     {
+        private readonly IDirectMessageRepository _dmRepo;
+        private readonly IUserRepository _userRepo;
+
+        public DMService(IDirectMessageRepository dmRepo, IUserRepository userRepo)
+        {
+            _dmRepo = dmRepo;
+            _userRepo = userRepo;
+        }
+        public async Task SendDMAsync(int senderId, int receiverId, string content)
+        {
+            var sender = await _userRepo.GetByIdAsync(senderId);
+            if (sender == null)
+                throw new InvalidOperationException("Sender not found.");
+            var receiver = await _userRepo.GetByIdAsync(receiverId);
+            if (receiver == null)
+                throw new InvalidOperationException("Receiver not found.");
+            // Domain entity enforces content rules
+            var dm = new DM(senderId, receiverId, content);
+            await _dmRepo.AddAsync(dm);
+        }
     }
 }
