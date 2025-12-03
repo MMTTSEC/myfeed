@@ -26,5 +26,48 @@ namespace MyFeed.Tests.Application
 
             userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Once);
         }
+
+        [Fact]
+        public async Task RegisterUser_WithExistingUsername_ThrowsException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            userRepo.Setup(x => x.GetByUsernameAsync("testuser")).ReturnsAsync(new User("testuser", "hash"));
+            var svc = new UserService(userRepo.Object);
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                svc.RegisterUserAsync("testuser", "password123")
+            );
+            userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RegisterUser_InvalidUsername_ThrowsArgumentException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            var svc = new UserService(userRepo.Object);
+
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                svc.RegisterUserAsync("", "password123")
+            );
+
+            userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RegisterUser_UsernameTooLong_ThrowsArgumentException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            var svc = new UserService(userRepo.Object);
+
+            string longUsername = new string('a', 51); 
+
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                svc.RegisterUserAsync(longUsername, "password123")
+            );
+
+            userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
+        }
+        
+       
     }
 }
+
