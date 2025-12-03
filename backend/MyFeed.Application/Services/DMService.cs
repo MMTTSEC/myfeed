@@ -1,12 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MyFeed.Domain.Interfaces;
+using MyFeed.Domain.Entities;
 
 namespace MyFeed.Application.Services
 {
-    internal class DMService
+    public class DMService
     {
+        private readonly IDirectMessageRepository _dmRepo;
+        private readonly IUserRepository _userRepo;
+
+        public DMService(IDirectMessageRepository dmRepo, IUserRepository userRepo)
+        {
+            _dmRepo = dmRepo;
+            _userRepo = userRepo;
+        }
     }
 }
