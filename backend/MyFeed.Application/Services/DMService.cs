@@ -18,7 +18,11 @@ namespace MyFeed.Application.Services
         public async Task SendDMAsync(int senderId, int receiverId, string content)
         {
             var sender = await _userRepo.GetByIdAsync(senderId);
-            
+            if (sender == null)
+                throw new InvalidOperationException("Sender not found.");
+            var receiver = await _userRepo.GetByIdAsync(receiverId);
+            if (receiver == null)
+                throw new InvalidOperationException("Receiver not found.");
             // Domain entity enforces content rules
             var dm = new DM(senderId, receiverId, content);
             await _dmRepo.AddAsync(dm);
