@@ -1,9 +1,20 @@
+import Navigation from '../../components/Navigation';
+
 UserHomePage.route = {
   path: '/home'
 };
 
 export default function UserHomePage() {
   return <>
-    <h1>Home</h1>
+    <section className="left-column UserHomePage">
+      <figure className="logo"><a href="/home"><span>mF</span></a></figure>
+      <Navigation />
+    </section>
+    <section className="center-column UserHomePage">
+
+    </section>
+    <section className="right-column UserHomePage">
+
+    </section>
   </>;
 }
