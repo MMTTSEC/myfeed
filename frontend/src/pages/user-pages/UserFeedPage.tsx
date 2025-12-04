@@ -8,7 +8,7 @@ export default function UserFeedPage() {
   return <>
     <section className="left-column UserFeedPage">
       <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation />
+      <Navigation currentPath={ UserFeedPage.route.path } />
     </section>
     <section className="center-column UserFeedPage">
     

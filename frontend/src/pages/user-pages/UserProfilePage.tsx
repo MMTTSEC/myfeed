@@ -8,7 +8,7 @@ export default function UserProfilePage() {
   return <>
     <section className="left-column UserProfilePage">
       <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation />
+      <Navigation currentPath={ UserProfilePage.route.path }/>
     </section>
     <section className="center-column UserProfilePage">
         
