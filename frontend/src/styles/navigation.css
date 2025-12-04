@@ -1,0 +1,53 @@
+nav.navigation-menu {
+  width: 100%;
+}
+
+nav.navigation-menu .nav-list li.nav-item {
+  list-style: none;
+  margin-bottom: var(--spacing-big);
+  transition: 0.3s ease-in-out;
+}
+
+nav.navigation-menu .nav-list li.nav-item.active {
+  background: var(--color-primary-gradient-right-to-left);
+  padding-left: var(--spacing-small);
+  transition: 0.3s ease-in-out;
+}
+
+nav.navigation-menu .nav-list li.nav-item:hover {
+  padding-left: var(--spacing-small);
+  transition: 0.3s ease-in-out;
+}
+
+nav.navigation-menu .nav-list li.nav-item.logout-button:hover {
+  padding-left: var(--spacing-small);
+  transition: 0.3s ease-in-out;
+}
+
+nav.navigation-menu .nav-list li.nav-item.logout-button a:hover {
+  color: var(--color-red-hover);
+  transition: 0.3s ease-in-out;
+}
+
+nav.navigation-menu .nav-list li.nav-item a {
+  color: var(--color-white);
+  font-size: var(--font-size-text);
+  font-weight: 600;
+  padding: var(--spacing-big);
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+nav.navigation-menu .nav-list li.nav-item a:hover {
+  text-decoration: none;
+}
+
+nav.navigation-menu .nav-list li.nav-item.logout-button a {
+  color: var(--color-red);
+}
+
+nav.navigation-menu .nav-list li.nav-item a i.bi {
+  margin-right: var(--spacing-big);
+}

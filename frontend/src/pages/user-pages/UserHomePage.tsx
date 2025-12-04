@@ -8,7 +8,7 @@ export default function UserHomePage() {
   return <>
     <section className="left-column UserHomePage">
       <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation />
+      <Navigation currentPath={ UserHomePage.route.path } />
     </section>
     <section className="center-column UserHomePage">
 

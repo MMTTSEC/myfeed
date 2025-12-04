@@ -8,7 +8,7 @@ export default function UserMessagesPage() {
   return <>
     <section className="left-column UserMessagesPage">
       <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation />
+      <Navigation currentPath={ UserMessagesPage.route.path }/>
     </section>
     <section className="center-column UserMessagesPage">
         
