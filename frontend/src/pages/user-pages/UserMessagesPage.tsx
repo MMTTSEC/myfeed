@@ -1,4 +1,5 @@
 import Navigation from '../../components/Navigation';
+import Footer from '../../components/Footer';
 
 UserMessagesPage.route = {
   path: '/messages'
@@ -7,8 +8,8 @@ UserMessagesPage.route = {
 export default function UserMessagesPage() {
   return <>
     <section className="left-column UserMessagesPage">
-      <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation currentPath={ UserMessagesPage.route.path }/>
+      <Navigation currentPath={UserMessagesPage.route.path} />
+      <Footer />
     </section>
     <section className="center-column UserMessagesPage">
       <div className="main-container">

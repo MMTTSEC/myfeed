@@ -1,5 +1,6 @@
 import Navigation from '../../components/Navigation';
 import WritePost from '../../components/WritePost';
+import Footer from '../../components/Footer';
 
 UserFeedPage.route = {
   path: '/feed'
@@ -8,8 +9,8 @@ UserFeedPage.route = {
 export default function UserFeedPage() {
   return <>
     <section className="left-column UserFeedPage">
-      <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation currentPath={ UserFeedPage.route.path } />
+      <Navigation currentPath={UserFeedPage.route.path} />
+      <Footer />
     </section>
     <section className="center-column UserFeedPage">
       <div className="main-container">

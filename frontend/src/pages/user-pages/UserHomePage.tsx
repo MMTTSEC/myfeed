@@ -1,5 +1,6 @@
 import Navigation from '../../components/Navigation';
 import WritePost from '../../components/WritePost';
+import Footer from '../../components/Footer';
 
 UserHomePage.route = {
   path: '/home'
@@ -8,8 +9,8 @@ UserHomePage.route = {
 export default function UserHomePage() {
   return <>
     <section className="left-column UserHomePage">
-      <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation currentPath={ UserHomePage.route.path } />
+      <Navigation currentPath={UserHomePage.route.path} />
+      <Footer />
     </section>
     <section className="center-column UserHomePage">
       <div className="main-container">
