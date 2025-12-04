@@ -1,0 +1,7 @@
+.write-post-container {
+  background: var(--color-primary-gradient-top-to-bottom);
+  min-height: 100px;
+  width: 100%;
+  padding: var(--spacing-big);
+  margin-bottom: var(--spacing-big);
+}
