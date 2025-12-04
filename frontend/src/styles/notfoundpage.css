@@ -3,5 +3,6 @@ main section.center-column.NotFoundPage .main-container {
 }
 
 main section.center-column.NotFoundPage .main-container p {
-  padding: var(--spacing-standard) 0;
+  padding: var(--spacing-standard);
+  text-align: center;
 }
