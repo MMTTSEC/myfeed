@@ -92,6 +92,7 @@ main section.left-column {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
 }
 
 main section.center-column {
@@ -131,7 +132,6 @@ figure.logo {
   font-weight: 600;
   color: var(--color-primary);
   text-shadow: var(--shadow-logo);
-  margin-bottom: var(--spacing-large);
 }
 
 figure.logo a {
@@ -268,4 +268,18 @@ form input[type="submit"]:hover {
 
 form button {
   margin-top: var(--spacing-big);
+}
+
+/* Footer */
+footer {
+  color: var(--color-gray);
+  font-size: var(--font-size-misc);
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+footer strong {
+  color: var(--color-primary-hover);
 }

@@ -1,4 +1,5 @@
 import Navigation from '../../components/Navigation';
+import Footer from '../../components/Footer';
 
 UserProfilePage.route = {
   path: '/profile/:userName'
@@ -7,8 +8,8 @@ UserProfilePage.route = {
 export default function UserProfilePage() {
   return <>
     <section className="left-column UserProfilePage">
-      <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation currentPath={ UserProfilePage.route.path }/>
+      <Navigation currentPath={UserProfilePage.route.path} />
+      <Footer />
     </section>
     <section className="center-column UserProfilePage">
       <div className="main-container">
