@@ -1,7 +1,11 @@
 import '../styles/displayfeed.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-export default function DisplayFeed() {
+interface NavigationProps {
+  currentPath: string;
+}
+
+export default function DisplayFeed({ currentPath }: NavigationProps) {
   return <>
   
   </>
