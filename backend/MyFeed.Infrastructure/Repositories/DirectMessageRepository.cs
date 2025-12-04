@@ -1,29 +1,36 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MyFeed.Domain.Entities;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Infrastructure.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MyFeed.Infrastructure.Repositories;
-
-/// <summary>
-/// Placeholder implementation. Replace with EF Core logic.
-/// </summary>
-public class DirectMessageRepository : IDirectMessageRepository
+namespace MyFeed.Infrastructure.Repositories
 {
-    private readonly AppDbContext _context;
-
-    public DirectMessageRepository(AppDbContext context)
+    public class DirectMessageRepository : IDirectMessageRepository
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public Task AddAsync(DM dm)
-    {
-    }
+        public DirectMessageRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    public Task<IEnumerable<DM>> GetConversationAsync(int userAId, int userBId)
-    {
+        public async Task AddAsync(DM dm)
+        {
+            await _context.DirectMessages.AddAsync(dm);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<DM>> GetConversationAsync(int userAId, int userBId)
+        {
+            return await _context.DirectMessages
+                .Where(dm =>
+                    (dm.SenderUserId == userAId && dm.ReceiverUserId == userBId) ||
+                    (dm.SenderUserId == userBId && dm.ReceiverUserId == userAId))
+                .OrderBy(dm => dm.CreatedAt)
+                .ToListAsync();
+        }
     }
 }
-
