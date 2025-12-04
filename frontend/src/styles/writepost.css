@@ -1,0 +1,29 @@
+.write-post-container {
+  background: var(--color-primary-gradient-top-to-bottom);
+  min-height: 100px;
+  width: 100%;
+  padding: var(--spacing-big);
+  margin-bottom: var(--spacing-big);
+}
+
+.write-post-container .write-post-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.write-post-container .write-post-form .char-count {
+  width: 40px;
+  height: 40px;
+  font-size: var(--font-size-misc);
+  font-weight: 700;
+  margin: var(--spacing-big);
+  padding: var(--spacing-standard);
+  border: 1px dashed white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

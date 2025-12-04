@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import '../../styles/notfoundpage.css';
 
 NotFoundPage.route = {
   path: '*'

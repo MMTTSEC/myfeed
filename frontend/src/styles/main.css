@@ -40,8 +40,8 @@
   /* Fonts */
   --font-primary: 'Open Sans', 'Avenir', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-size-header: 32px;
-  --font-size-subheader: 16px;
-  --font-size-text: 14px;
+  --font-size-subheader: 20px;
+  --font-size-text: 16px;
   --font-size-misc: 12px;
 
   /* Spacing */
@@ -106,7 +106,6 @@ main section.center-column {
 
 main section.center-column .main-container {
   width: 100%;
-  padding: var(--spacing-large);
 
   display: flex;
   flex-direction: column;
@@ -216,6 +215,7 @@ form {
 
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 form label {
@@ -229,9 +229,41 @@ form input {
   background-color: var(--color-gray-dark);
   color: var(--color-gray);
   font-size: var(--font-size-text);
-  padding: var(--spacing-standard);
+  padding: var(--spacing-standard) var(--spacing-big);
   border: none;
   border-radius: var(--border-radius-standard);
+  margin-bottom: var(--spacing-big);
+}
+
+form textarea {
+  background-color: var(--color-gray-dark);
+  min-width: 100%;
+  max-width: 100%;
+  color: var(--color-gray);
+  font-size: var(--font-size-text);
+  line-height: 1.4;
+  padding: var(--spacing-standard) var(--spacing-big);
+  border: none;
+  border-radius: var(--border-radius-standard);
+  overflow: hidden;
+  resize: none;
+}
+
+form input[type="submit"] {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-gray-dark);
+  font-weight: 600;
+  padding: var(--spacing-standard) var(--spacing-large);
+  border-radius: var(--border-radius-standard);
+  margin-bottom: 0;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+form input[type="submit"]:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  transition: 0.3s ease-in-out;
 }
 
 form button {

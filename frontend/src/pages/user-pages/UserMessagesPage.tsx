@@ -11,7 +11,9 @@ export default function UserMessagesPage() {
       <Navigation currentPath={ UserMessagesPage.route.path }/>
     </section>
     <section className="center-column UserMessagesPage">
+      <div className="main-container">
         
+      </div>
     </section>
     <section className="right-column UserMessagesPage">
   
