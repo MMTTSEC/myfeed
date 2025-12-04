@@ -1,11 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
-type HeaderProps = {
-
-  };
-
-export default function Main({}: HeaderProps) {
+export default function Main() {
   return <main>
-    <Outlet context={{}} />
+    <Outlet />
   </main>;
 }
