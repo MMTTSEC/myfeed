@@ -1,3 +1,7 @@
 main section.center-column.NotFoundPage .main-container {
   padding: var(--spacing-large);
 }
+
+main section.center-column.NotFoundPage .main-container p {
+  padding: var(--spacing-standard) 0;
+}
