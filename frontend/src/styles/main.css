@@ -106,7 +106,6 @@ main section.center-column {
 
 main section.center-column .main-container {
   width: 100%;
-  padding: var(--spacing-large);
 
   display: flex;
   flex-direction: column;
