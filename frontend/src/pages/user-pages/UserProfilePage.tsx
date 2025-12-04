@@ -11,7 +11,9 @@ export default function UserProfilePage() {
       <Navigation currentPath={ UserProfilePage.route.path }/>
     </section>
     <section className="center-column UserProfilePage">
+      <div className="main-container">
         
+      </div>
     </section>
     <section className="right-column UserProfilePage">
         
