@@ -1,36 +1,40 @@
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MyFeed.Domain.Entities;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Infrastructure.Data;
+using System.Threading.Tasks;
 
-namespace MyFeed.Infrastructure.Repositories;
-
-/// <summary>
-/// Placeholder implementation. Replace with EF Core logic.
-/// </summary>
-public class UserRepository : IUserRepository
+namespace MyFeed.Infrastructure.Repositories
 {
-    private readonly AppDbContext _context;
-
-    public UserRepository(AppDbContext context)
+    public class UserRepository : IUserRepository
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public Task AddAsync(User user)
-    {
-    }
+        public UserRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    public Task<bool> ExistsAsync(int id)
-    {
-    }
+        public async Task<User?> GetByIdAsync(int id)
+        {
+            return await _context.Users.FindAsync(id);
+        }
 
-    public Task<User?> GetByIdAsync(int id)
-    {
-    }
+        public async Task<User?> GetByUsernameAsync(string username)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == username);
+        }
 
-    public Task<User?> GetByUsernameAsync(string username)
-    {
+        public async Task AddAsync(User user)
+        {
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsAsync(int id)
+        {
+            return await _context.Users.AnyAsync(u => u.Id == id);
+        }
     }
 }
-
