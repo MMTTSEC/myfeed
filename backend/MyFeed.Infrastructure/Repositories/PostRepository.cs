@@ -1,37 +1,53 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MyFeed.Domain.Entities;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Infrastructure.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MyFeed.Infrastructure.Repositories;
-
-/// <summary>
-/// Placeholder implementation. Replace with EF Core logic.
-/// </summary>
-public class PostRepository : IPostRepository
+namespace MyFeed.Infrastructure.Repositories
 {
-    private readonly AppDbContext _context;
-
-    public PostRepository(AppDbContext context)
+    public class PostRepository : IPostRepository
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public Task AddAsync(Post post)
-    {
-    }
+        public PostRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    public Task<Post?> GetByIdAsync(int id)
-    {
-    }
+        public async Task<Post?> GetByIdAsync(int id)
+        {
+            return await _context.Posts.FindAsync(id);
+        }
 
-    public Task<IEnumerable<Post>> GetFeedAsync(int userId)
-    {
-    }
+        public async Task<IEnumerable<Post>> GetPostsByUserAsync(int userId)
+        {
+            return await _context.Posts
+                .Where(p => p.AuthorUserId == userId)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
 
-    public Task<IEnumerable<Post>> GetPostsByUserAsync(int userId)
-    {
+        public async Task<IEnumerable<Post>> GetFeedAsync(int userId)
+        {
+            // Get posts from users that userId follows
+            var followeeIds = await _context.Follows
+                .Where(f => f.FollowerId == userId)
+                .Select(f => f.FolloweeId)
+                .ToListAsync();
+
+            return await _context.Posts
+                .Where(p => followeeIds.Contains(p.AuthorUserId))
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task AddAsync(Post post)
+        {
+            await _context.Posts.AddAsync(post);
+            await _context.SaveChangesAsync();
+        }
     }
 }
-
