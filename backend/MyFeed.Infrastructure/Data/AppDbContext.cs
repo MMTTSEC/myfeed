@@ -16,6 +16,15 @@ namespace MyFeed.Infrastructure.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<DM> DirectMessages { get; set; }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Local SQLite file database for development
+                optionsBuilder.UseSqlite("Data Source=Database/myfeed.db");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
