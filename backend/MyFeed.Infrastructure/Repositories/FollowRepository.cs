@@ -1,36 +1,52 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using MyFeed.Domain.Entities;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Infrastructure.Data;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MyFeed.Infrastructure.Repositories;
-
-/// <summary>
-/// Placeholder implementation. Replace with EF Core logic.
-/// </summary>
-public class FollowRepository : IFollowRepository
+namespace MyFeed.Infrastructure.Repositories
 {
-    private readonly AppDbContext _context;
-
-    public FollowRepository(AppDbContext context)
+    public class FollowRepository : IFollowRepository
     {
-    }
+        private readonly AppDbContext _context;
 
-    public Task AddAsync(Follow follow)
-    {
-    }
+        public FollowRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    public Task<bool> ExistsAsync(int followerId, int followeeId)
-    {
-    }
+        public async Task AddAsync(Follow follow)
+        {
+            await _context.Follows.AddAsync(follow);
+            await _context.SaveChangesAsync();
+        }
 
-    public Task<IEnumerable<int>> GetFolloweeIdsAsync(int followerId)
-    {
-    }
+        public async Task RemoveAsync(int followerId, int followeeId)
+        {
+            var follow = await _context.Follows
+                .FirstOrDefaultAsync(f => f.FollowerId == followerId && f.FolloweeId == followeeId);
 
-    public Task RemoveAsync(int followerId, int followeeId)
-    {
+            if (follow != null)
+            {
+                _context.Follows.Remove(follow);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> ExistsAsync(int followerId, int followeeId)
+        {
+            return await _context.Follows
+                .AnyAsync(f => f.FollowerId == followerId && f.FolloweeId == followeeId);
+        }
+
+        public async Task<IEnumerable<int>> GetFolloweeIdsAsync(int followerId)
+        {
+            return await _context.Follows
+                .Where(f => f.FollowerId == followerId)
+                .Select(f => f.FolloweeId)
+                .ToListAsync();
+        }
     }
 }
-
