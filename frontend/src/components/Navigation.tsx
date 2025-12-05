@@ -1,9 +1,6 @@
+import type NavigationProps from '../interfaces/NavigationProps';
 import '../styles/Navigation.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
-interface NavigationProps {
-  currentPath: string;
-}
 
 export default function Navigation({ currentPath }: NavigationProps) {
 

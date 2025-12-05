@@ -42,7 +42,7 @@
   --font-size-header: 32px;
   --font-size-subheader: 20px;
   --font-size-text: 16px;
-  --font-size-misc: 12px;
+  --font-size-misc: 14px;
 
   /* Spacing */
   --spacing-large: 25px;
@@ -58,6 +58,7 @@
   --shadow-logo: 0px 0px 3px rgba(var(--color-primary-rgb), 1);
   --shadow-background: 0px 0px 10px 5px rgba(var(--color-primary-rgb), 0.25);
   --shadow-text: 0px 0px 2px rgba(0, 0, 0, 0.25);
+  --shadow-text-avatar: 0px 0px 2px rgba(255, 255, 255, 1);
 }
 
 /* General Styling */
