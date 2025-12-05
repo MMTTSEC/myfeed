@@ -1,5 +1,6 @@
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
+import WriteMessage from '../../components/WriteMessage';
 
 UserMessagesPage.route = {
   path: '/messages'
@@ -13,7 +14,7 @@ export default function UserMessagesPage() {
     </section>
     <section className="center-column UserMessagesPage">
       <div className="main-container">
-        
+        <WriteMessage />
       </div>
     </section>
     <section className="right-column UserMessagesPage">

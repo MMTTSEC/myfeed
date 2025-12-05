@@ -250,8 +250,7 @@ form input {
 
 form textarea {
   background-color: var(--color-gray-dark);
-  min-width: 100%;
-  max-width: 100%;
+  width: 100%;
   color: var(--color-gray);
   font-size: var(--font-size-text);
   line-height: 1.4;
