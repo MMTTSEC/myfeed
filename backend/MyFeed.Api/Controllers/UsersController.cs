@@ -15,12 +15,12 @@ public class UsersController : ControllerBase
         _userService = userService;
     }
 
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterUserRequest request)
     {
         try
         {
-            await _userService.RegisterUserAsync(request.Username, request.PasswordHash);
+            await _userService.RegisterUserAsync(request.Username, request.Password);
             var createdUser = await _userService.GetUserByUsernameAsync(request.Username);
             if (createdUser == null)
             {
@@ -32,6 +32,32 @@ public class UsersController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            return BadRequest("Username and password are required.");
+        }
+
+        var user = await _userService.LoginAsync(request.Username, request.Password);
+        if (user == null)
+        {
+            return Unauthorized("Invalid username or password.");
+        }
+
+        // Return user info (in production, you'd return a JWT token here)
+        return Ok(new { 
+            id = user.Id, 
+            username = user.Username,
+            message = "Login successful" 
+        });
     }
 
     [HttpGet("{id}")]
@@ -65,7 +91,13 @@ public class UsersController : ControllerBase
 public class RegisterUserRequest
 {
     public string Username { get; set; } = string.Empty;
-    public string PasswordHash { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}
+
+public class LoginRequest
+{
+    public string Username { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
 }
 
 
