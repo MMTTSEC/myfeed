@@ -26,6 +26,14 @@ public class PostsController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while creating the post.");
+        }
     }
 }
 
