@@ -31,6 +31,31 @@ namespace MyFeed.Application.Services
             await _postRepo.AddAsync(post);
         }
 
+        public async Task UpdatePostAsync(int postId, int authorId, string title, string body)
+        {
+            var post = await _postRepo.GetByIdAsync(postId);
+            if (post == null)
+                throw new KeyNotFoundException();
+
+            if (post.AuthorUserId != authorId)
+                throw new InvalidOperationException("Only the author can edit this post.");
+
+            post.Update(title, body);
+            await _postRepo.UpdateAsync(post);
+        }
+
+        public async Task DeletePostAsync(int postId, int authorId)
+        {
+            var post = await _postRepo.GetByIdAsync(postId);
+            if (post == null)
+                throw new KeyNotFoundException();
+
+            if (post.AuthorUserId != authorId)
+                throw new InvalidOperationException("Only the author can delete this post.");
+
+            await _postRepo.DeleteAsync(post);
+        }
+
         public async Task<Post?> GetPostByIdAsync(int id)
         {
             return await _postRepo.GetByIdAsync(id);

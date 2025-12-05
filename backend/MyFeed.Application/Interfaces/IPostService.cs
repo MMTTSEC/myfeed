@@ -10,6 +10,8 @@ namespace MyFeed.Application.Interfaces
         Task<Post?> GetPostByIdAsync(int id);
         Task<IEnumerable<Post>> GetPostsByUserAsync(int userId);
         Task<IEnumerable<Post>> GetFeedAsync(int userId);
+        Task UpdatePostAsync(int postId, int authorId, string title, string body);
+        Task DeletePostAsync(int postId, int authorId);
     }
 }
 
