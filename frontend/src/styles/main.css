@@ -98,12 +98,24 @@ main section.left-column {
 
 main section.center-column {
   background-color: var(--color-background-primary);
-  width: 600px;
+  width: 700px;
   min-height: 100vh;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+main section.center-column header.page-header {
+  width: 100%;
+  background: var(--color-primary-gradient-top-to-bottom);
+  min-height: 100px;
+  padding: var(--spacing-large);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 main section.center-column .main-container {
@@ -163,7 +175,7 @@ p {
 
 /* Bootstrap icons */
 .bi {
-  font-size: 20px
+  font-size: 24px
 }
 
 /* Buttons */
