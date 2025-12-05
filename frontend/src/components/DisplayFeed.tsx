@@ -17,25 +17,25 @@ function fetchPostsOfType(type: string): Post[] {
         {
           id: '1',
           author: 'Zenty',
-          content: 'This is a post',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-04',
         },
         {
           id: '2',
           author: 'MMTTSEC',
-          content: 'This is also a post',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05',
         },
         {
           id: '3',
           author: 'mycookie5',
-          content: 'Is this a post?',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05',
         },
         {
           id: '4',
           author: 'Zenty',
-          content: 'Even this is a post',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05',
         },
       ];
@@ -44,13 +44,13 @@ function fetchPostsOfType(type: string): Post[] {
         {
           id: '2',
           author: 'MMTTSEC',
-          content: 'This is also a post',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05',
         },
         {
           id: '3',
           author: 'mycookie5',
-          content: 'Is this a post?',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05',
         },
       ];
@@ -59,13 +59,13 @@ function fetchPostsOfType(type: string): Post[] {
         {
           id: '1',
           author: 'Zenty',
-          content: 'This is a post',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-04',
         },
         {
           id: '3',
           author: 'Zenty',
-          content: 'Even this is a post',
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05',
         },
       ];
