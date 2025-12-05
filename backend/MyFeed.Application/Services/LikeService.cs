@@ -2,10 +2,11 @@ using System;
 using System.Threading.Tasks;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Domain.Entities;
+using MyFeed.Application.Interfaces;
 
 namespace MyFeed.Application.Services
 {
-    public class LikeService
+    public class LikeService : ILikeService
     {
         private readonly ILikeRepository _likeRepo;
         private readonly IUserRepository _userRepo;
