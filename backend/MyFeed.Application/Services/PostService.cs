@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Domain.Entities;
+using MyFeed.Application.Interfaces;
 
 namespace MyFeed.Application.Services
 {
-    public class PostService
+    public class PostService : IPostService
     {
         private readonly IPostRepository _postRepo;
         private readonly IUserRepository _userRepo;
@@ -28,6 +29,21 @@ namespace MyFeed.Application.Services
             // Domain entity enforces body/title rules
             var post = new Post(authorId, title, body);
             await _postRepo.AddAsync(post);
+        }
+
+        public async Task<Post?> GetPostByIdAsync(int id)
+        {
+            return await _postRepo.GetByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<Post>> GetPostsByUserAsync(int userId)
+        {
+            return await _postRepo.GetPostsByUserAsync(userId);
+        }
+
+        public async Task<IEnumerable<Post>> GetFeedAsync(int userId)
+        {
+            return await _postRepo.GetFeedAsync(userId);
         }
 
     }
