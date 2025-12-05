@@ -1,0 +1,114 @@
+header .profile-header {
+  width: 100%;
+  margin-bottom: var(--spacing-large);
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between
+}
+
+header .profile-header .profile-header-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+header .profile-header .profile-header-left h1.profile-name {
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+}
+
+header .profile-header .profile-header-left h1 span.profile-name-at {
+  padding-right: 3px;
+}
+
+header .profile-header .profile-header-left .profile-creation-date {
+  font-size: var(--font-size-misc);
+  padding-top: var(--spacing-small);
+}
+
+header .profile-header .profile-header-left .profile-creation-date i.bi {
+  font-size: var(--font-size-misc);
+  padding-right: var(--spacing-small);
+  padding-left: 2px;
+}
+
+header .profile-header .profile-header-right {
+  margin-left: var(--spacing-standard);
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--spacing-standard);
+}
+
+header .profile-header .profile-header-right button.profile-action {
+  width: 90px;
+  font-size: 12px;
+  font-weight: 600;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header .profile-header .profile-header-right button.button-clear-messages {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-yellow);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-clear-messages:hover {
+  background-color: var(--color-yellow-hover);
+  color: var(--color-white);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-delete-account {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-red);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-delete-account:hover {
+  background-color: var(--color-red-hover);
+  color: var(--color-white);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-message {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-message:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-follow {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-primary);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-follow:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-unfollow {
+  background-color: var(--color-background-tertiary);
+  color: var(--color-gray-dark);
+  transition: 0.3s ease-in-out;
+}
+
+header .profile-header .profile-header-right button.button-unfollow:hover {
+  background-color: var(--color-gray-dark);
+  color: var(--color-white);
+  transition: 0.3s ease-in-out;
+}

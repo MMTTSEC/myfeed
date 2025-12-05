@@ -98,7 +98,7 @@ main section.left-column {
 
 main section.center-column {
   background-color: var(--color-background-primary);
-  width: 600px;
+  width: 700px;
   min-height: 100vh;
 
   display: flex;
@@ -175,7 +175,7 @@ p {
 
 /* Bootstrap icons */
 .bi {
-  font-size: 20px
+  font-size: 24px
 }
 
 /* Buttons */
