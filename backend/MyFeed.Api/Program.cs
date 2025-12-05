@@ -3,6 +3,7 @@ using MyFeed.Application.Services;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Infrastructure.Data;
 using MyFeed.Infrastructure.Repositories;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,8 +13,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // DbContext - SQLite database
+// Use absolute path to Infrastructure/Database folder
+var dbPath = Path.Combine(
+    Directory.GetCurrentDirectory(),
+    "..", "MyFeed.Infrastructure", "Database", "myfeed.db"
+);
+var dbDirectory = Path.GetDirectoryName(dbPath);
+if (dbDirectory != null && !Directory.Exists(dbDirectory))
+{
+    Directory.CreateDirectory(dbDirectory);
+}
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=Database/myfeed.db"));
+    options.UseSqlite($"Data Source={dbPath}"));
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
