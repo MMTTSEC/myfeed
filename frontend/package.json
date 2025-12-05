@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "start:frontend": "npm run dev",
-    "start:backend": "dotnet run --urls http://localhost:5163 --project ../backend/MyFeed.Api/MyFeed.Api.csproj",
+    "start:backend": "dotnet run --urls http://localhost:5000 --project ../backend/MyFeed.Api/MyFeed.Api.csproj",
     "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
