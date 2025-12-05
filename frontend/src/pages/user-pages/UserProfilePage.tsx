@@ -1,5 +1,6 @@
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
+import HandlePageHeader from '../../components/HandlePageHeader';
 import DisplayFeed from '../../components/DisplayFeed';
 
 UserProfilePage.route = {
@@ -14,6 +15,7 @@ export default function UserProfilePage() {
     </section>
     <section className="center-column UserProfilePage">
       <div className="main-container">
+        <HandlePageHeader currentPath={UserProfilePage.route.path} />
         <DisplayFeed currentPath={UserProfilePage.route.path} />
       </div>
     </section>
