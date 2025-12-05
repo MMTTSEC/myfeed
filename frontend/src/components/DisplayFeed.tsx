@@ -75,6 +75,11 @@ function fetchPostsOfType(type: string): Post[] {
 }
 
 function PostCard({ post }: { post: Post }) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit' });
+  };
+
   return (
     <article className="post-card">
 
@@ -82,8 +87,9 @@ function PostCard({ post }: { post: Post }) {
         <figure className="post-author-avatar">
           <strong>{post.author.charAt(0).toUpperCase()}</strong>
         </figure>
-        <strong>{post.author}</strong>
-        <span className="post-date">{post.createdAt}</span>
+        <span className="post-info">
+          <strong className="post-author">{post.author}</strong> · {formatDate(post.createdAt)}
+        </span>
       </div>
 
       <div className="post-content">
