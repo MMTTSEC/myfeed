@@ -1,11 +1,12 @@
 ﻿using MyFeed.Domain.Interfaces;
 using MyFeed.Domain.Entities;
+using MyFeed.Application.Interfaces;
 using System;
 using System.Threading.Tasks;
 
 namespace MyFeed.Application.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository _userRepo;
 
