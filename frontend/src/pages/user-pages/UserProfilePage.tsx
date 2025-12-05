@@ -3,7 +3,7 @@ import Footer from '../../components/Footer';
 import DisplayFeed from '../../components/DisplayFeed';
 
 UserProfilePage.route = {
-  path: '/profile/:userName'
+  path: '/profile/'
 };
 
 export default function UserProfilePage() {

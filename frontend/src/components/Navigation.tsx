@@ -22,8 +22,8 @@ export default function Navigation({ currentPath }: NavigationProps) {
             <a href="/messages"><i className="bi bi-chat-left"></i>Messages</a>
           </li>
 
-          <li className={`nav-item ${currentPath === "/profile/:userName" ? "active" : ""}`}>
-            <a href="/profile/:userName"><i className="bi bi-person"></i>Profile</a>
+          <li className={`nav-item ${currentPath === "/profile/" ? "active" : ""}`}>
+            <a href="/profile/"><i className="bi bi-person"></i>Profile</a>
           </li>
 
           <li className="nav-item logout-button">
