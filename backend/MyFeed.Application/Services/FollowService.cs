@@ -2,10 +2,11 @@ using System;
 using System.Threading.Tasks;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Domain.Entities;
+using MyFeed.Application.Interfaces;
 
 namespace MyFeed.Application.Services
 {
-    public class FollowService
+    public class FollowService : IFollowService
     {
         private readonly IFollowRepository _followRepo;
         private readonly IUserRepository _userRepo;
