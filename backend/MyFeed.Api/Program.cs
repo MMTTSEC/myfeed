@@ -39,7 +39,7 @@ builder.Services.AddScoped<IFollowRepository, FollowRepository>();
 builder.Services.AddScoped<MyFeed.Application.Interfaces.IUserService, MyFeed.Application.Services.UserService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<DMService>();
-builder.Services.AddScoped<LikeService>();
+builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<FollowService>();
 
 var app = builder.Build();
