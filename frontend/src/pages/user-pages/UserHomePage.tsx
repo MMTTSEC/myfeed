@@ -1,6 +1,6 @@
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
-import WritePost from '../../components/WritePost';
+import HandlePageHeader from '../../components/HandlePageHeader';
 import DisplayFeed from '../../components/DisplayFeed';
 
 
@@ -16,7 +16,7 @@ export default function UserHomePage() {
     </section>
     <section className="center-column UserHomePage">
       <div className="main-container">
-        <WritePost />
+        <HandlePageHeader currentPath={UserHomePage.route.path} />
         <DisplayFeed currentPath={UserHomePage.route.path} />
       </div>
     </section>

@@ -8,6 +8,7 @@
 .feed-container {
   width: 100%;
   padding: var(--spacing-large);
+  padding-top: var(--spacing-standard);
 
   display: flex;
   flex-direction: column;
