@@ -88,7 +88,7 @@ function PostCard({ post }: { post: Post }) {
           <strong>{post.author.charAt(0).toUpperCase()}</strong>
         </figure>
         <span className="post-info">
-          <strong className="post-author">{post.author}</strong> · {formatDate(post.createdAt)}
+          <a href="#"><strong className="post-author">{post.author}</strong></a> · {formatDate(post.createdAt)}
         </span>
       </div>
 
