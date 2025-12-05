@@ -21,7 +21,12 @@ public class UsersController : ControllerBase
         try
         {
             await _userService.RegisterUserAsync(request.Username, request.PasswordHash);
-            return CreatedAtAction(nameof(GetUserByUsername), new { username = request.Username }, null);
+            var createdUser = await _userService.GetUserByUsernameAsync(request.Username);
+            if (createdUser == null)
+            {
+                return StatusCode(500, "User was created but could not be retrieved.");
+            }
+            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
         }
         catch (InvalidOperationException ex)
         {
@@ -40,9 +45,14 @@ public class UsersController : ControllerBase
         return Ok(user);
     }
 
-    [HttpGet("by-username/{username}")]
-    public async Task<IActionResult> GetUserByUsername(string username)
+    [HttpGet]
+    public async Task<IActionResult> GetUserByUsername([FromQuery] string username)
     {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return BadRequest("Username parameter is required.");
+        }
+
         var user = await _userService.GetUserByUsernameAsync(username);
         if (user == null)
         {
