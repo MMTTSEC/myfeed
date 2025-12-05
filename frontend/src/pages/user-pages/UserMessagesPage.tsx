@@ -2,6 +2,7 @@ import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import DisplayMessages from '../../components/DisplayMessages';
 import WriteMessage from '../../components/WriteMessage';
+import DisplayConversations from '../../components/DisplayConversations';
 
 UserMessagesPage.route = {
   path: '/messages'
@@ -20,7 +21,7 @@ export default function UserMessagesPage() {
       </div>
     </section>
     <section className="right-column UserMessagesPage">
-  
+      <DisplayConversations />
     </section>
   </>;
 }
