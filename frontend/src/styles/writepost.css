@@ -3,7 +3,7 @@
   min-height: 100px;
   width: 100%;
   padding: var(--spacing-big);
-  margin-bottom: var(--spacing-big);
+  padding-bottom: 0;
 }
 
 .write-post-container .write-post-form {
