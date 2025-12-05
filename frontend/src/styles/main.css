@@ -57,7 +57,7 @@
   /* Drop Shadows */
   --shadow-logo: 0px 0px 3px rgba(var(--color-primary-rgb), 1);
   --shadow-background: 0px 0px 10px 5px rgba(var(--color-primary-rgb), 0.25);
-  --shadow-text: 0px 0px 2px rgba(0, 0, 0, 0.25);
+  --shadow-text: 0px 0px 2px rgba(0, 0, 0, 0.5);
   --shadow-text-avatar: 0px 0px 2px rgba(255, 255, 255, 1);
 }
 
@@ -87,6 +87,7 @@ main {
 main section.left-column {
   width: 200px;
   min-height: 100vh;
+  margin-left: var(--spacing-large);
   margin-right: var(--spacing-large);
   padding: var(--spacing-large) 0;
 
@@ -130,6 +131,7 @@ main section.right-column {
   width: 200px;
   min-height: 100vh;
   margin-left: var(--spacing-large);
+  margin-right: var(--spacing-large);
   padding: var(--spacing-large) 0;
 
   display: flex;
@@ -250,8 +252,7 @@ form input {
 
 form textarea {
   background-color: var(--color-gray-dark);
-  min-width: 100%;
-  max-width: 100%;
+  width: 100%;
   color: var(--color-gray);
   font-size: var(--font-size-text);
   line-height: 1.4;

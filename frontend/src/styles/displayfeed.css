@@ -43,7 +43,7 @@
 }
 
 .feed-container article.post-card .post-header figure.post-author-avatar .post-author-avatar-initial {
-  font-size: var(--font-size-subheader);
+  font-size: var(--font-size-header);
   text-shadow: var(--shadow-text-avatar);
 }
 

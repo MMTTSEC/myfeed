@@ -18,25 +18,25 @@ function fetchPostsOfType(type: string): Post[] {
           id: '1',
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-04',
+          createdAt: '2025-12-04T22:05:00',
         },
         {
           id: '2',
           author: 'MMTTSEC',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05',
+          createdAt: '2025-12-05T16:14:00',
         },
         {
           id: '3',
           author: 'mycookie5',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05',
+          createdAt: '2025-12-06T13:26:00',
         },
         {
           id: '4',
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05',
+          createdAt: '2025-12-06T22:30:00',
         },
       ];
     case 'followedPosts':
@@ -45,13 +45,13 @@ function fetchPostsOfType(type: string): Post[] {
           id: '2',
           author: 'MMTTSEC',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05',
+          createdAt: '2025-12-05T16:14:00',
         },
         {
           id: '3',
           author: 'mycookie5',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05',
+          createdAt: '2025-12-06T13:26:00',
         },
       ];
     case 'userPosts':
@@ -60,13 +60,13 @@ function fetchPostsOfType(type: string): Post[] {
           id: '1',
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-04',
+          createdAt: '2025-12-04T22:05:00',
         },
         {
-          id: '3',
+          id: '4',
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05',
+          createdAt: '2025-12-06T22:30:00',
         },
       ];
     default:
@@ -103,6 +103,8 @@ function PostCard({ post }: { post: Post }) {
 export default function DisplayFeed({ currentPath }: NavigationProps) {
   const feedType = getFeedType(currentPath);
   const posts = fetchPostsOfType(feedType);
+  // show newest posts first
+  const sortedPosts = posts.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   if (!feedType) {
     return <div className="feed-placeholder">Unknown feed type.</div>;
@@ -114,7 +116,7 @@ export default function DisplayFeed({ currentPath }: NavigationProps) {
 
   return (
     <div className="feed-container">
-      {posts.map((post) => (
+      {sortedPosts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>

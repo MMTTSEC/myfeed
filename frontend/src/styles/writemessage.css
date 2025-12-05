@@ -1,0 +1,49 @@
+.UserMessagesPage .main-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.write-message-container {
+  width: 100%;
+  max-height: 115px;
+  background: var(--color-primary-gradient-bottom-to-top);
+  min-height: 100px;
+  padding: var(--spacing-large);
+  margin-top: auto;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.write-message-container .write-message-form {
+  width: 100%;
+  padding: 0;
+
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing-big);
+}
+
+.write-message-container .write-message-form textarea {
+  width: calc(100% - 110px);
+}
+
+.write-message-container .write-message-form .char-count {
+  width: 40px;
+  height: 40px;
+  font-size: var(--font-size-misc);
+  font-weight: 700;
+  margin: var(--spacing-big);
+  padding: var(--spacing-standard);
+  border: 1px dashed white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

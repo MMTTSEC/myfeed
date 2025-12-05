@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import '../styles/writepost.css';
+import '../styles/writemessage.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-const MAX_CHARS = 300;
+const MAX_CHARS = 110;
 
 function sanitizePaste(input: string): string {
   return input
@@ -26,7 +26,7 @@ function useAutoResize(textAreaRef: React.RefObject<HTMLTextAreaElement | null>,
   }, [value, textAreaRef]);
 }
 
-export default function WritePost() {
+export default function WriteMessage() {
   const [text, setText] = useState("");
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -55,20 +55,19 @@ export default function WritePost() {
   }
 
   return (
-    <div className="write-post-container">
-      <form className="write-post-form" onSubmit={handleSubmit}>
+    <div className="write-message-container">
+      <form className="write-message-form" onSubmit={handleSubmit}>
         <textarea
           ref={textAreaRef}
-          className="write-post-textarea"
-          placeholder="Write something that's on your mind..."
+          className="write-message-textarea"
+          placeholder="Say something..."
           value={text}
           onChange={handleChange}
           onPaste={handlePaste}
           rows={1}
         ></textarea>
 
-        <div className="char-count">{MAX_CHARS - text.length}</div>
-        <input type="submit" className="write-post-submit-button" value="Post" />
+        <input type="submit" className="write-message-submit-button" value="Send" />
       </form>
     </div>
   );
