@@ -106,6 +106,128 @@ namespace MyFeed.Tests.Controllers
             var serverError = Assert.IsType<ObjectResult>(result);
             Assert.Equal(500, serverError.StatusCode);
         }
+
+        [Fact]
+        public async Task UpdatePost_Valid_ReturnsNoContent()
+        {
+            // Arrange
+            var mockPostService = new Mock<IPostService>();
+            var controller = new PostsController(mockPostService.Object);
+            var request = new UpdatePostRequest
+            {
+                AuthorId = 1,
+                Title = "New",
+                Body = "Body"
+            };
+
+            // Act
+            var result = await controller.UpdatePost(10, request);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            mockPostService.Verify(s => s.UpdatePostAsync(10, 1, "New", "Body"), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdatePost_NotFound_ReturnsNotFound()
+        {
+            // Arrange
+            var mockPostService = new Mock<IPostService>();
+            mockPostService
+                .Setup(s => s.UpdatePostAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new KeyNotFoundException());
+
+            var controller = new PostsController(mockPostService.Object);
+            var request = new UpdatePostRequest
+            {
+                AuthorId = 1,
+                Title = "New",
+                Body = "Body"
+            };
+
+            // Act
+            var result = await controller.UpdatePost(10, request);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task UpdatePost_InvalidOperation_ReturnsBadRequest()
+        {
+            // Arrange
+            var mockPostService = new Mock<IPostService>();
+            mockPostService
+                .Setup(s => s.UpdatePostAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+                .ThrowsAsync(new InvalidOperationException("Only the author can edit this post."));
+
+            var controller = new PostsController(mockPostService.Object);
+            var request = new UpdatePostRequest
+            {
+                AuthorId = 2,
+                Title = "New",
+                Body = "Body"
+            };
+
+            // Act
+            var result = await controller.UpdatePost(10, request);
+
+            // Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequest.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeletePost_Valid_ReturnsNoContent()
+        {
+            // Arrange
+            var mockPostService = new Mock<IPostService>();
+            var controller = new PostsController(mockPostService.Object);
+
+            // Act
+            var result = await controller.DeletePost(10, authorId: 1);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            mockPostService.Verify(s => s.DeletePostAsync(10, 1), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeletePost_NotFound_ReturnsNotFound()
+        {
+            // Arrange
+            var mockPostService = new Mock<IPostService>();
+            mockPostService
+                .Setup(s => s.DeletePostAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new KeyNotFoundException());
+
+            var controller = new PostsController(mockPostService.Object);
+
+            // Act
+            var result = await controller.DeletePost(10, authorId: 1);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task DeletePost_InvalidOperation_ReturnsBadRequest()
+        {
+            // Arrange
+            var mockPostService = new Mock<IPostService>();
+            mockPostService
+                .Setup(s => s.DeletePostAsync(It.IsAny<int>(), It.IsAny<int>()))
+                .ThrowsAsync(new InvalidOperationException("Only the author can delete this post."));
+
+            var controller = new PostsController(mockPostService.Object);
+
+            // Act
+            var result = await controller.DeletePost(10, authorId: 2);
+
+            // Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, badRequest.StatusCode);
+        }
     }
 }
 
