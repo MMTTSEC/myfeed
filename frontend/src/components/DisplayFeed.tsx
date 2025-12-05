@@ -45,7 +45,7 @@ function PostCard({ post }: { post: Post }) {
       <div className="post-content">
         {post.content}
       </div>
-      
+
     </article>
   );
 }
@@ -54,7 +54,19 @@ export default function DisplayFeed({ currentPath }: NavigationProps) {
   const feedType = getFeedType(currentPath);
   const posts = fetchPostsOfType(feedType);
 
-  return <>
-  
-  </>
+  if (!feedType) {
+    return <div className="feed-placeholder">Unknown feed type.</div>;
+  }
+
+  if (posts.length === 0) {
+    return <div className="feed-empty">No posts available.</div>;
+  }
+
+  return (
+    <div className="feed-container">
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} />
+      ))}
+    </div>
+  );
 }
