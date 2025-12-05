@@ -17,7 +17,7 @@ namespace MyFeed.Tests.Controllers
             // Arrange
             var mockUserService = new Mock<IUserService>();
             var controller = new UsersController(mockUserService.Object);
-            var request = new RegisterUserRequest { Username = "testuser", PasswordHash = "hashedpassword123" };
+            var request = new RegisterUserRequest { Username = "testuser", Password = "password123" };
 
             // Act
             var result = await controller.RegisterUser(request);
@@ -25,7 +25,7 @@ namespace MyFeed.Tests.Controllers
             // Assert
             var createdResult = Assert.IsType<CreatedAtActionResult>(result);
             Assert.Equal(201, createdResult.StatusCode);
-            mockUserService.Verify(s => s.RegisterUserAsync("testuser", "hashedpassword123"), Times.Once);
+            mockUserService.Verify(s => s.RegisterUserAsync("testuser", "password123"), Times.Once);
         }
 
         [Fact]
@@ -36,7 +36,7 @@ namespace MyFeed.Tests.Controllers
             mockUserService.Setup(s => s.RegisterUserAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new InvalidOperationException("Username already taken."));
             var controller = new UsersController(mockUserService.Object);
-            var request = new RegisterUserRequest { Username = "existinguser", PasswordHash = "hashedpassword123" };
+            var request = new RegisterUserRequest { Username = "existinguser", Password = "password123" };
 
             // Act
             var result = await controller.RegisterUser(request);
