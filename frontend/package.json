@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "vite",
     "start:frontend": "npm run dev",
-    "start:backend": "dotnet run --urls http://localhost:5163 --project ../backend/MyFeed.Api/MyFeed.Api.csproj",
+    "start:backend": "dotnet run --urls http://localhost:5000 --project ../backend/MyFeed.Api/MyFeed.Api.csproj",
     "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "bootstrap-icons": "^1.13.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.9.6"

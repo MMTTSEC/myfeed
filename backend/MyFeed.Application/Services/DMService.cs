@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Domain.Entities;
+using MyFeed.Application.Interfaces;
 
 namespace MyFeed.Application.Services
 {
-    public class DMService
+    public class DMService : IDMService
     {
         private readonly IDirectMessageRepository _dmRepo;
         private readonly IUserRepository _userRepo;

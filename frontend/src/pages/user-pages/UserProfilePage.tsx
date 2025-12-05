@@ -1,20 +1,27 @@
 import Navigation from '../../components/Navigation';
+import Footer from '../../components/Footer';
+import HandlePageHeader from '../../components/HandlePageHeader';
+import DisplayFeed from '../../components/DisplayFeed';
+import DisplayFollowing from '../../components/DisplayFollowing';
 
 UserProfilePage.route = {
-  path: '/profile/:userName'
+  path: '/profile/'
 };
 
 export default function UserProfilePage() {
   return <>
     <section className="left-column UserProfilePage">
-      <figure className="logo"><a href="/home"><span>mF</span></a></figure>
-      <Navigation />
+      <Navigation currentPath={UserProfilePage.route.path} />
+      <Footer />
     </section>
     <section className="center-column UserProfilePage">
-        
+      <div className="main-container">
+        <HandlePageHeader currentPath={UserProfilePage.route.path} />
+        <DisplayFeed currentPath={UserProfilePage.route.path} />
+      </div>
     </section>
     <section className="right-column UserProfilePage">
-        
+      <DisplayFollowing />
     </section>
   </>;
 }

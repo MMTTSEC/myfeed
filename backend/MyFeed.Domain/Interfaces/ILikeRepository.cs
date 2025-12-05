@@ -1,12 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using MyFeed.Domain.Entities;
 
 namespace MyFeed.Domain.Interfaces
 {
-    internal interface ILikeRepository
+    public interface ILikeRepository
     {
+        Task AddAsync(Like like);
+        Task RemoveAsync(int userId, int postId);
+        Task<bool> ExistsAsync(int userId, int postId);
+        Task<int> CountForPostAsync(int postId);
     }
 }
