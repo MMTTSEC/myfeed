@@ -14,5 +14,7 @@ namespace MyFeed.Domain.Interfaces
         Task<IEnumerable<Post>> GetPostsByUserAsync(int userId);   
         Task<IEnumerable<Post>> GetFeedAsync(int userId);          
         Task AddAsync(Post post);
+        Task UpdateAsync(Post post);
+        Task DeleteAsync(Post post);
     }
 }

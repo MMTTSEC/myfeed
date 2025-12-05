@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MyFeed.Application.Interfaces;
 using MyFeed.Application.Services;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Infrastructure.Data;
@@ -36,7 +37,7 @@ builder.Services.AddScoped<IFollowRepository, FollowRepository>();
 
 // Application services
 builder.Services.AddScoped<MyFeed.Application.Interfaces.IUserService, MyFeed.Application.Services.UserService>();
-builder.Services.AddScoped<PostService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<DMService>();
 builder.Services.AddScoped<LikeService>();
 builder.Services.AddScoped<FollowService>();
