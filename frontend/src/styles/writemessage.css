@@ -1,14 +1,15 @@
 .UserMessagesPage .main-container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 .write-message-container {
   width: 100%;
+  max-height: 115px;
   background: var(--color-primary-gradient-bottom-to-top);
   min-height: 100px;
   padding: var(--spacing-large);
-
   margin-top: auto;
 
   display: flex;

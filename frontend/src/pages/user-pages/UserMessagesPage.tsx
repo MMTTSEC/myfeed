@@ -1,5 +1,6 @@
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
+import DisplayMessages from '../../components/DisplayMessages';
 import WriteMessage from '../../components/WriteMessage';
 
 UserMessagesPage.route = {
@@ -14,6 +15,7 @@ export default function UserMessagesPage() {
     </section>
     <section className="center-column UserMessagesPage">
       <div className="main-container">
+        <DisplayMessages />
         <WriteMessage />
       </div>
     </section>

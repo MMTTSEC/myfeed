@@ -1,0 +1,103 @@
+.messages-placeholder,
+.messages-empty {
+  width: 100%;
+  color: var(--color-gray);
+  padding: var(--spacing-large);
+  text-align: center;
+}
+
+.messages-container {
+  width: 100%;
+  padding: var(--spacing-large);
+  padding-top: var(--spacing-standard);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.messages-container article.message-card {
+  width: 100%;
+}
+
+.messages-container article.message-card .message-header {
+  width: 100%;
+  padding: var(--spacing-standard);
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.messages-container article.message-card.your-message .message-header {
+  flex-direction: row-reverse;
+}
+
+.messages-container article.message-card .message-header figure.message-sender-avatar {
+  background-color: var(--color-primary);
+  box-shadow: var(--shadow-background);
+  width: 45px;
+  height: 45px;
+  border-radius: var(--border-radius-standard);
+  margin-right: var(--spacing-big);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.messages-container article.message-card.your-message .message-header figure.message-sender-avatar {
+  margin-right: 0;
+  margin-left: var(--spacing-big);
+}
+
+.messages-container article.message-card .message-header figure.message-sender-avatar .message-sender-avatar-initial {
+  font-size: var(--font-size-header);
+  text-shadow: var(--shadow-text-avatar);
+}
+
+.messages-container article.message-card .message-header .message-info {
+  font-size: var(--font-size-misc);
+  color: var(--color-gray);
+}
+
+.messages-container article.message-card .message-header .message-info a {
+  color: var(--color-white);
+}
+
+.messages-container article.message-card .message-header .message-info .message-author-at {
+  padding-right: 1px;
+}
+
+.messages-container article.message-card .message-header .message-info .message-sender {
+  color: var(--color-white);
+}
+
+.messages-container article.message-card.your-message .message-header .message-info .message-sender {
+  color: var(--color-primary);
+}
+
+.messages-container article.message-card .message-content {
+  width: 100%;
+  background-color: var(--color-background-tertiary);
+  border-radius: var(--border-radius-standard);
+  padding: var(--spacing-standard) var(--spacing-big);
+  color: var(--color-gray-dark);
+}
+
+.messages-container article.message-card.your-message .message-content {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  text-shadow: var(--shadow-text);
+}
+
+.messages-container article.message-card .message-footer {
+  padding: var(--spacing-standard);
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.messages-container article.message-card .message-footer .message-info {
+  font-size: var(--font-size-misc);
+  color: var(--color-gray);
+}
