@@ -50,9 +50,9 @@ namespace MyFeed.Tests.Application
             var jsonToken = handler.ReadJwtToken(token);
 
             // Assert
-            Assert.Equal(userId.ToString(), jsonToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            Assert.Equal(username, jsonToken.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value);
             Assert.Equal(userId.ToString(), jsonToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value);
+            Assert.Equal(username, jsonToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value);
+            Assert.Equal(userId.ToString(), jsonToken.Claims.FirstOrDefault(c => c.Type == "user_id")?.Value);
             Assert.NotNull(jsonToken.Claims.FirstOrDefault(c => c.Type == "jti"));
         }
 

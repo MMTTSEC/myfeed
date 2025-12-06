@@ -9,10 +9,12 @@ namespace MyFeed.Api.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IJwtService _jwtService;
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, IJwtService jwtService)
     {
         _userService = userService;
+        _jwtService = jwtService;
     }
 
     [HttpPost("register")]
@@ -52,8 +54,12 @@ public class UsersController : ControllerBase
             return Unauthorized("Invalid username or password.");
         }
 
-        // Return user info (in production, you'd return a JWT token here)
+        // Generate JWT token
+        var token = _jwtService.GenerateToken(user.Id, user.Username);
+
+        // Return token along with user info
         return Ok(new { 
+            token = token,
             id = user.Id, 
             username = user.Username,
             message = "Login successful" 
