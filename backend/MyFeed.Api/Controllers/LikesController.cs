@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Services;
 using MyFeed.Application.Interfaces;
+using MyFeed.Api.Extensions;
 
 namespace MyFeed.Api.Controllers;
 
@@ -22,7 +23,8 @@ public class LikesController : ControllerBase
     {
         try
         {
-            await _likeService.LikePostAsync(request.UserId, request.PostId);
+            var userId = HttpContext.GetCurrentUserIdRequired();
+            await _likeService.LikePostAsync(userId, request.PostId);
             return Ok(new { message = "Post liked successfully" });
         }
         catch (InvalidOperationException ex)
@@ -36,10 +38,11 @@ public class LikesController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> UnlikePost([FromQuery] int userId, [FromQuery] int postId)
+    public async Task<IActionResult> UnlikePost([FromQuery] int postId)
     {
         try
         {
+            var userId = HttpContext.GetCurrentUserIdRequired();
             await _likeService.UnlikePostAsync(userId, postId);
             return NoContent();
         }
@@ -74,6 +77,5 @@ public class LikesController : ControllerBase
 
 public class LikePostRequest
 {
-    public int UserId { get; set; }
     public int PostId { get; set; }
 }

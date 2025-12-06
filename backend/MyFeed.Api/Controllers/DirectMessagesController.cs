@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Interfaces;
 using MyFeed.Application.Services;
+using MyFeed.Api.Extensions;
 
 namespace MyFeed.Api.Controllers;
 
@@ -22,7 +23,8 @@ public class DirectMessagesController : ControllerBase
     {
         try
         {
-            await _dmService.SendDMAsync(request.SenderId, request.ReceiverId, request.Message);
+            var senderId = HttpContext.GetCurrentUserIdRequired();
+            await _dmService.SendDMAsync(senderId, request.ReceiverId, request.Message);
             return Ok(new { message = "DM sent successfully" });
         }
         catch (InvalidOperationException ex)
@@ -42,7 +44,6 @@ public class DirectMessagesController : ControllerBase
 
 public class SendDMRequest
 {
-    public int SenderId { get; set; }
     public int ReceiverId { get; set; }
     public string Message { get; set; } = string.Empty;
 }

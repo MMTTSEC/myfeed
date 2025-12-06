@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Interfaces;
+using MyFeed.Api.Extensions;
 
 namespace MyFeed.Api.Controllers;
 
@@ -21,7 +22,8 @@ public class PostsController : ControllerBase
     {
         try
         {
-            await _postService.CreatePostAsync(request.AuthorId, request.Title, request.Body);
+            var userId = HttpContext.GetCurrentUserIdRequired();
+            await _postService.CreatePostAsync(userId, request.Title, request.Body);
             return Created(string.Empty, null);
         }
         catch (InvalidOperationException ex)
@@ -43,7 +45,8 @@ public class PostsController : ControllerBase
     {
         try
         {
-            await _postService.UpdatePostAsync(id, request.AuthorId, request.Title, request.Body);
+            var userId = HttpContext.GetCurrentUserIdRequired();
+            await _postService.UpdatePostAsync(id, userId, request.Title, request.Body);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -65,11 +68,12 @@ public class PostsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePost(int id, [FromQuery] int authorId)
+    public async Task<IActionResult> DeletePost(int id)
     {
         try
         {
-            await _postService.DeletePostAsync(id, authorId);
+            var userId = HttpContext.GetCurrentUserIdRequired();
+            await _postService.DeletePostAsync(id, userId);
             return NoContent();
         }
         catch (KeyNotFoundException)
@@ -89,14 +93,12 @@ public class PostsController : ControllerBase
 
 public class CreatePostRequest
 {
-    public int AuthorId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
 }
 
 public class UpdatePostRequest
 {
-    public int AuthorId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Body { get; set; } = string.Empty;
 }

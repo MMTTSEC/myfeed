@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Interfaces;
 using MyFeed.Application.Services;
+using MyFeed.Api.Extensions;
 
 namespace MyFeed.Api.Controllers;
 
@@ -22,7 +23,8 @@ public class FollowsController : ControllerBase
     {
         try
         {
-            await _followService.FollowUserAsync(request.FollowerId, request.FolloweeId);
+            var followerId = HttpContext.GetCurrentUserIdRequired();
+            await _followService.FollowUserAsync(followerId, request.FolloweeId);
             return Ok(new { message = "User followed successfully" });
         }
         catch (InvalidOperationException ex)
@@ -40,10 +42,11 @@ public class FollowsController : ControllerBase
     }
 
     [HttpDelete]
-    public async Task<IActionResult> UnfollowUser([FromQuery] int followerId, [FromQuery] int followeeId)
+    public async Task<IActionResult> UnfollowUser([FromQuery] int followeeId)
     {
         try
         {
+            var followerId = HttpContext.GetCurrentUserIdRequired();
             await _followService.UnfollowUserAsync(followerId, followeeId);
             return NoContent();
         }
@@ -57,11 +60,12 @@ public class FollowsController : ControllerBase
         }
     }
 
-    [HttpGet("{userId}/following")]
-    public async Task<IActionResult> GetFollowing(int userId)
+    [HttpGet("following")]
+    public async Task<IActionResult> GetFollowing()
     {
         try
         {
+            var userId = HttpContext.GetCurrentUserIdRequired();
             var followeeIds = await _followService.GetFollowingAsync(userId);
             return Ok(followeeIds);
         }
@@ -78,6 +82,5 @@ public class FollowsController : ControllerBase
 
 public class FollowUserRequest
 {
-    public int FollowerId { get; set; }
     public int FolloweeId { get; set; }
 }
