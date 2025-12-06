@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Interfaces;
 using MyFeed.Application.Services;
@@ -6,6 +7,7 @@ namespace MyFeed.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DirectMessagesController : ControllerBase
 {
     private readonly IDMService _dmService;

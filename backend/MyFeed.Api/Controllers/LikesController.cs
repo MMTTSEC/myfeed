@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Services;
 using MyFeed.Application.Interfaces;
@@ -6,6 +7,7 @@ namespace MyFeed.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class LikesController : ControllerBase
 {
     private readonly ILikeService _likeService;
