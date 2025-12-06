@@ -16,7 +16,8 @@ namespace MyFeed.Tests.Controllers
         {
             // Arrange
             var mockUserService = new Mock<IUserService>();
-            var controller = new UsersController(mockUserService.Object);
+            var mockJwtService = new Mock<IJwtService>();
+            var controller = new UsersController(mockUserService.Object, mockJwtService.Object);
             var request = new RegisterUserRequest { Username = "testuser", Password = "password123" };
 
             // Act
@@ -35,7 +36,8 @@ namespace MyFeed.Tests.Controllers
             var mockUserService = new Mock<IUserService>();
             mockUserService.Setup(s => s.RegisterUserAsync(It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new InvalidOperationException("Username already taken."));
-            var controller = new UsersController(mockUserService.Object);
+            var mockJwtService = new Mock<IJwtService>();
+            var controller = new UsersController(mockUserService.Object, mockJwtService.Object);
             var request = new RegisterUserRequest { Username = "existinguser", Password = "password123" };
 
             // Act
@@ -53,7 +55,8 @@ namespace MyFeed.Tests.Controllers
             var user = new User("testuser", "hashedpassword123");
             var mockUserService = new Mock<IUserService>();
             mockUserService.Setup(s => s.GetUserByIdAsync(1)).ReturnsAsync(user);
-            var controller = new UsersController(mockUserService.Object);
+            var mockJwtService = new Mock<IJwtService>();
+            var controller = new UsersController(mockUserService.Object, mockJwtService.Object);
 
             // Act
             var result = await controller.GetUserById(1);
@@ -71,7 +74,8 @@ namespace MyFeed.Tests.Controllers
             // Arrange
             var mockUserService = new Mock<IUserService>();
             mockUserService.Setup(s => s.GetUserByIdAsync(999)).ReturnsAsync((User?)null);
-            var controller = new UsersController(mockUserService.Object);
+            var mockJwtService = new Mock<IJwtService>();
+            var controller = new UsersController(mockUserService.Object, mockJwtService.Object);
 
             // Act
             var result = await controller.GetUserById(999);
@@ -87,7 +91,8 @@ namespace MyFeed.Tests.Controllers
             var user = new User("testuser", "hashedpassword123");
             var mockUserService = new Mock<IUserService>();
             mockUserService.Setup(s => s.GetUserByUsernameAsync("testuser")).ReturnsAsync(user);
-            var controller = new UsersController(mockUserService.Object);
+            var mockJwtService = new Mock<IJwtService>();
+            var controller = new UsersController(mockUserService.Object, mockJwtService.Object);
 
             // Act
             var result = await controller.GetUserByUsername("testuser");
@@ -105,7 +110,8 @@ namespace MyFeed.Tests.Controllers
             // Arrange
             var mockUserService = new Mock<IUserService>();
             mockUserService.Setup(s => s.GetUserByUsernameAsync("nonexistent")).ReturnsAsync((User?)null);
-            var controller = new UsersController(mockUserService.Object);
+            var mockJwtService = new Mock<IJwtService>();
+            var controller = new UsersController(mockUserService.Object, mockJwtService.Object);
 
             // Act
             var result = await controller.GetUserByUsername("nonexistent");
