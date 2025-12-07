@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BsPersonFill, BsKeyFill } from "react-icons/bs";
 import { MdEmail } from "react-icons/md";
+import '../../styles/loginregisterpage.css';
 
 LoginRegisterPage.route = {
   path: "/",

@@ -1,0 +1,112 @@
+.LoginRegisterPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #000000;
+  /* Background-Main */
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.main-container {
+  width: 400px;
+  padding: 20px;
+}
+
+.logo span {
+  font-size: 2rem;
+  color: white;
+  /* Color-White */
+  display: block;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  flex: 1;
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+  color: #808080;
+  /* Color-Gray */
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  color: #d9ff00;
+  /* Color-Primary (grön) */
+  font-weight: bold;
+  border-bottom: 2px solid #d9ff00;
+}
+
+.error-box {
+  background-color: #FF4C4C;
+  /* Color-Red */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  list-style: none;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* LOGIN FORM */
+.auth-form.login {
+  background-color: #d9ff00;
+  /* Color-Primary */
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.auth-form.login label {
+  color: black;
+  /* Color-Black */
+}
+
+.auth-form.login input {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+}
+
+/* REGISTER FORM */
+.auth-form.register label {
+  color: white;
+  /* Color-White */
+}
+
+.auth-form.register input {
+  background-color: black;
+  /* Color-Black */
+  color: white;
+  border: 1px solid #808080;
+  /* Color-Gray */
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.auth-form button {
+  padding: 10px;
+  background-color: white;
+  /* Color-White */
+  color: black;
+  /* Color-Black */
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
