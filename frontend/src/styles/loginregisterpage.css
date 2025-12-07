@@ -1,112 +1,106 @@
-.LoginRegisterPage {
+main section.center-column.LoginRegisterPage {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
   height: 100vh;
-  background-color: #000000;
-  /* Background-Main */
-  font-family: 'Segoe UI', sans-serif;
 }
 
-.main-container {
+main section.center-column.LoginRegisterPage .main-container {
   width: 400px;
-  padding: 20px;
+  padding: var(--spacing-large);
 }
 
-.logo span {
-  font-size: 2rem;
-  color: white;
-  /* Color-White */
-  display: block;
-  text-align: center;
-  margin-bottom: 20px;
+main section.center-column.LoginRegisterPage figure.logo {
+  margin-bottom: 50px;
+}
+
+main section.center-column.LoginRegisterPage figure.logo span {
+  font-size: calc(var(--font-size-header) * 2);
 }
 
 .tabs {
+  width: 100%;
   display: flex;
   justify-content: space-around;
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-large);
 }
 
 .tabs button {
   flex: 1;
-  padding: 10px;
+  padding: var(--spacing-standard);
   background-color: transparent;
   border: none;
+  font-weight: bold;
   color: #808080;
-  /* Color-Gray */
-  font-size: 1rem;
+  border: 1px solid transparent;
   cursor: pointer;
 }
 
 .tabs button.active {
-  color: #d9ff00;
-  /* Color-Primary (grön) */
+  color: var(--color-primary);
   font-weight: bold;
-  border-bottom: 2px solid #d9ff00;
+  border-bottom: 1px solid var(--color-primary);
 }
 
 .error-box {
-  background-color: #FF4C4C;
-  /* Color-Red */
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 15px;
+  background-color: var(--color-red);
+  color: var(--color-white);
+  padding: var(--spacing-big);
+  border-radius: var(--border-radius-standard);
+  margin-bottom: var(--spacing-big);
   list-style: none;
 }
 
+.error-box li {
+  margin-bottom: var(--spacing-big);
+}
+
+.error-box li:last-of-type {
+  margin-bottom: 0;
+}
+
 .auth-form {
+  width: 100%;
+  background-color: var(--color-primary);
+  padding: var(--spacing-large);
+  border-radius: var(--border-radius-big);
+
   display: flex;
   flex-direction: column;
-  gap: 15px;
+}
+.auth-form label {
+  margin-bottom: var(--spacing-small);
+  display: flex;
+  align-items: center;
 }
 
-/* LOGIN FORM */
-.auth-form.login {
-  background-color: #d9ff00;
-  /* Color-Primary */
-  padding: 20px;
-  border-radius: 10px;
+.auth-form label svg {
+  font-size: var(--font-size-text);
+  margin-right: var(--spacing-standard);
 }
 
-.auth-form.login label {
-  color: black;
-  /* Color-Black */
-}
-
-.auth-form.login input {
-  padding: 10px;
-  border-radius: 5px;
+.auth-form input {
+  width: 100%;
+  padding: var(--spacing-standard) var(--spacing-big);
+  border-radius: var(--border-radius-standard);
   border: none;
-  font-size: 1rem;
-}
-
-/* REGISTER FORM */
-.auth-form.register label {
-  color: white;
-  /* Color-White */
-}
-
-.auth-form.register input {
-  background-color: black;
-  /* Color-Black */
-  color: white;
-  border: 1px solid #808080;
-  /* Color-Gray */
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 1rem;
 }
 
 .auth-form button {
-  padding: 10px;
   background-color: white;
-  /* Color-White */
   color: black;
-  /* Color-Black */
-  border: none;
-  border-radius: 5px;
+  font-size: var(--font-size-text);
+  padding: var(--spacing-standard) var(--spacing-large);
+  border: 1px solid transparent;
   font-weight: bold;
   cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.auth-form button:hover {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
+  transition: 0.3s ease-in-out;
 }

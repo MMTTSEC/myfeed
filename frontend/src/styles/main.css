@@ -234,15 +234,17 @@ form {
 }
 
 form label {
+  width: 100%;
   color: var(--color-white);
   font-size: var(--font-size-text);
   text-shadow: var(--shadow-text);
-  margin-top: var(--spacing-standard);
+  font-weight: 600;
 }
 
 form input {
   background-color: var(--color-gray-dark);
   color: var(--color-gray);
+  font-family: monospace;
   font-size: var(--font-size-text);
   padding: var(--spacing-standard) var(--spacing-big);
   border: none;
@@ -254,6 +256,7 @@ form textarea {
   background-color: var(--color-gray-dark);
   width: 100%;
   color: var(--color-gray);
+  font-family: monospace;
   font-size: var(--font-size-text);
   line-height: 1.4;
   padding: var(--spacing-standard) var(--spacing-big);
@@ -266,6 +269,7 @@ form textarea {
 form input[type="submit"] {
   background-color: var(--color-background-tertiary);
   color: var(--color-gray-dark);
+  font-family: var(--font-primary);
   font-weight: 600;
   padding: var(--spacing-standard) var(--spacing-large);
   border-radius: var(--border-radius-standard);

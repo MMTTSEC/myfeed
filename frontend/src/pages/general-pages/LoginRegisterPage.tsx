@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { BsPersonFill, BsKeyFill } from "react-icons/bs";
-import { MdEmail } from "react-icons/md";
 import '../../styles/loginregisterpage.css';
 
 LoginRegisterPage.route = {
@@ -11,7 +10,6 @@ export default function LoginRegisterPage() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
 
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -19,9 +17,6 @@ export default function LoginRegisterPage() {
 
   const validateRequired = (value: string, field: string) =>
     value.trim() === "" ? `${field} is required.` : null;
-
-  const validateEmailFormat = (value: string) =>
-    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "Invalid email format." : null;
 
   const validatePasswordLength = (value: string) =>
     value.length < 8 ? "Password must be at least 8 characters long." : null;
@@ -55,20 +50,16 @@ export default function LoginRegisterPage() {
     const newErrors: string[] = [];
 
     const reqUser = validateRequired(username, "Username");
-    const reqEmail = validateRequired(email, "Email");
     const reqPass = validateRequired(password, "Password");
     const reqConf = validateRequired(confirmPassword, "Confirm Password");
 
-    const emailFormat = validateEmailFormat(email);
     const lenPass = validatePasswordLength(password);
     const letPass = validatePasswordLetters(password);
     const matchPass = validatePasswordMatch(password, confirmPassword);
 
     if (reqUser) newErrors.push(reqUser);
-    if (reqEmail) newErrors.push(reqEmail);
     if (reqPass) newErrors.push(reqPass);
     if (reqConf) newErrors.push(reqConf);
-    if (emailFormat) newErrors.push(emailFormat);
     if (lenPass) newErrors.push(lenPass);
     if (letPass) newErrors.push(letPass);
     if (matchPass) newErrors.push(matchPass);
@@ -76,7 +67,7 @@ export default function LoginRegisterPage() {
     if (newErrors.length > 0) return setErrors(newErrors);
 
     setErrors([]);
-    console.log("REGISTER SUCCESS", { username, email, password });
+    console.log("REGISTER SUCCESS", { username, password });
   };
 
   return (
@@ -154,17 +145,6 @@ export default function LoginRegisterPage() {
               placeholder="Your Username..."
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-            />
-
-            <label>
-              <MdEmail />
-              Email:
-            </label>
-            <input
-              type="email"
-              placeholder="Your Email..."
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
             />
 
             <label>
