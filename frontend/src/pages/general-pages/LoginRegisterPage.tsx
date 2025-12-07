@@ -45,7 +45,7 @@ export default function LoginRegisterPage() {
     console.log("LOGIN SUCCESS", { username, password });
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: string[] = [];
 
@@ -67,7 +67,36 @@ export default function LoginRegisterPage() {
     if (newErrors.length > 0) return setErrors(newErrors);
 
     setErrors([]);
-    console.log("REGISTER SUCCESS", { username, password });
+
+    try {
+      const response = await fetch('/api/Users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      if (response.status === 201) {
+        // Registration successful - switch to login tab
+        setActiveTab("login");
+        setUsername("");
+        setPassword("");
+        setConfirmPassword("");
+        setErrors([]);
+      } else if (response.status === 400) {
+        // Bad request - get error message from API
+        const errorData = await response.text();
+        setErrors([errorData || "Registration failed. Please try again."]);
+      } else {
+        setErrors(["An unexpected error occurred. Please try again."]);
+      }
+    } catch (error) {
+      setErrors(["Network error. Please check your connection and try again."]);
+    }
   };
 
   return (
