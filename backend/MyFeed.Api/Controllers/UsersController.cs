@@ -29,7 +29,13 @@ public class UsersController : ControllerBase
             {
                 return StatusCode(500, "User was created but could not be retrieved.");
             }
-            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, createdUser);
+           
+            return CreatedAtAction(nameof(GetUserById), new { id = createdUser.Id }, new
+            {
+                id = createdUser.Id,
+                username = createdUser.Username,
+                createdAt = createdUser.CreatedAt
+            });
         }
         catch (InvalidOperationException ex)
         {
@@ -76,7 +82,13 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(user);
+      
+        return Ok(new
+        {
+            id = user.Id,
+            username = user.Username,
+            createdAt = user.CreatedAt
+        });
     }
 
     [HttpGet]
@@ -93,7 +105,13 @@ public class UsersController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(user);
+       
+        return Ok(new
+        {
+            id = user.Id,
+            username = user.Username,
+            createdAt = user.CreatedAt
+        });
     }
 }
 
