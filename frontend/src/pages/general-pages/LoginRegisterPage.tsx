@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsPersonFill, BsKeyFill } from "react-icons/bs";
 import '../../styles/loginregisterpage.css';
@@ -16,6 +16,14 @@ export default function LoginRegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState<string[]>([]);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/home');
+    }
+  }, [navigate]);
 
   const validateRequired = (value: string, field: string) =>
     value.trim() === "" ? `${field} is required.` : null;
