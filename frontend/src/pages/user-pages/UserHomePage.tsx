@@ -1,3 +1,4 @@
+import MobileHeader from '../../components/MobileHeader';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import HandlePageHeader from '../../components/HandlePageHeader';
@@ -12,6 +13,7 @@ UserHomePage.route = {
 export default function UserHomePage() {
   return (
     <ProtectedRoute>
+      <MobileHeader currentPath={UserHomePage.route.path} />
       <section className="left-column UserHomePage">
         <Navigation currentPath={UserHomePage.route.path} />
         <Footer />

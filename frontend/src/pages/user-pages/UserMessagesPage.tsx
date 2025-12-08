@@ -1,3 +1,4 @@
+import MobileHeader from '../../components/MobileHeader';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import DisplayMessages from '../../components/DisplayMessages';
@@ -12,6 +13,7 @@ UserMessagesPage.route = {
 export default function UserMessagesPage() {
   return (
     <ProtectedRoute>
+      <MobileHeader currentPath={UserMessagesPage.route.path} />
       <section className="left-column UserMessagesPage">
         <Navigation currentPath={UserMessagesPage.route.path} />
         <Footer />

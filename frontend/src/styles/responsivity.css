@@ -1,12 +1,66 @@
 @media (max-width: 1100px) {
+  main {
+    padding-top: 69px;
+  }
+
+  main header.mobile-header {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-bottom: 1px solid var(--color-background-primary);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-standard);
+  }
+
+  main header.mobile-header nav.mobile-navigation {
+    width: 100%;
+  }
+
+  main header.mobile-header nav.mobile-navigation ul {
+    width: 100%;
+      
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  main header.mobile-header nav.mobile-navigation ul li {
+    padding: 0 var(--spacing-big);
+    list-style: none;
+  }
+
+  main header.mobile-header nav.mobile-navigation ul li a {
+    color: var(--color-white);
+    font-weight: 600;
+    transition: 0.3s ease-in-out;
+  }
+
+  main header.mobile-header nav.mobile-navigation ul li a:hover {
+    color: var(--color-primary-hover);
+    text-decoration: none;
+    transition: 0.3s ease-in-out;
+  }
+
+  main header.mobile-header nav.mobile-navigation ul li a .bi {
+    font-size: var(--font-size-header);
+  }
+
   main section.left-column {
     width: 100%;
     display: none;
   }
 
-    main section.center-column {
-      width: 100%
-    }
+  main section.center-column {
+    width: 100%
+  }
 
   main section.right-column {
     width: 100%;
