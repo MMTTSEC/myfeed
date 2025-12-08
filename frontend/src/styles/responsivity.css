@@ -1,0 +1,15 @@
+@media (max-width: 1100px) {
+  main section.left-column {
+    width: 100%;
+    display: none;
+  }
+
+    main section.center-column {
+      width: 100%
+    }
+
+  main section.right-column {
+    width: 100%;
+    display: none;
+  }
+}

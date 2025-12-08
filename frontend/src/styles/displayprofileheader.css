@@ -38,7 +38,8 @@ header .profile-header .profile-header-left .profile-creation-date i.bi {
 header .profile-header .profile-header-right {
   margin-left: var(--spacing-standard);
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  flex-direction: row-reverse;
   align-items: stretch;
   gap: var(--spacing-standard);
 }

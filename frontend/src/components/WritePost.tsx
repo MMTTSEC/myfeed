@@ -60,7 +60,7 @@ export default function WritePost() {
         <textarea
           ref={textAreaRef}
           className="write-post-textarea"
-          placeholder="Write something that's on your mind..."
+          placeholder="Write something..."
           value={text}
           onChange={handleChange}
           onPaste={handlePaste}
