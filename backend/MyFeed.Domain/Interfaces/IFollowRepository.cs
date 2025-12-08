@@ -11,5 +11,6 @@ namespace MyFeed.Domain.Interfaces
         Task RemoveAsync(int followerId, int followeeId);
         Task<bool> ExistsAsync(int followerId, int followeeId);
         Task<IEnumerable<int>> GetFolloweeIdsAsync(int followerId);
+        Task<IEnumerable<int>> GetFollowerIdsAsync(int followeeId);
     }
 }

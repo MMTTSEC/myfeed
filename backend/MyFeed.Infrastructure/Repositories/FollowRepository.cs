@@ -48,5 +48,13 @@ namespace MyFeed.Infrastructure.Repositories
                 .Select(f => f.FolloweeId)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<int>> GetFollowerIdsAsync(int followeeId)
+        {
+            return await _context.Follows
+                .Where(f => f.FolloweeId == followeeId)
+                .Select(f => f.FollowerId)
+                .ToListAsync();
+        }
     }
 }
