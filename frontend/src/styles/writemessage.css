@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
 }
 
 .write-message-container {
@@ -10,7 +11,6 @@
   background: var(--color-primary-gradient-bottom-to-top);
   min-height: 100px;
   padding: var(--spacing-large);
-  margin-top: auto;
 
   display: flex;
   flex-direction: row;

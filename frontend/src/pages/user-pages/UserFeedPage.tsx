@@ -1,3 +1,4 @@
+import MobileHeader from '../../components/MobileHeader';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import HandlePageHeader from '../../components/HandlePageHeader';
@@ -11,6 +12,7 @@ UserFeedPage.route = {
 export default function UserFeedPage() {
   return (
     <ProtectedRoute>
+      <MobileHeader currentPath={UserFeedPage.route.path} />
       <section className="left-column UserFeedPage">
         <Navigation currentPath={UserFeedPage.route.path} />
         <Footer />

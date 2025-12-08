@@ -57,7 +57,7 @@
   /* Drop Shadows */
   --shadow-logo: 0px 0px 3px rgba(var(--color-primary-rgb), 1);
   --shadow-background: 0px 0px 10px 5px rgba(var(--color-primary-rgb), 0.25);
-  --shadow-text: 0px 0px 2px rgba(0, 0, 0, 0.5);
+  --shadow-text: 0px 0px 2px rgba(0, 0, 0, 0.25);
   --shadow-text-avatar: 0px 0px 2px rgba(255, 255, 255, 1);
 }
 
@@ -79,9 +79,13 @@ body {
 main {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   min-height: 100vh;
+}
+
+main header.mobile-header {
+  display: none;
 }
 
 main section.left-column {
@@ -95,6 +99,9 @@ main section.left-column {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+
+  position: sticky;
+  top: 0;
 }
 
 main section.center-column {
@@ -137,11 +144,13 @@ main section.right-column {
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  position: sticky;
+  top: 0;
 }
 
 /* Logotype */
 figure.logo {
-  font-family: 'open sans';
   font-size: var(--font-size-header);
   letter-spacing: -9%;
   font-weight: 600;
