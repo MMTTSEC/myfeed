@@ -1,31 +1,169 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getCurrentUserId, getUserById, type UserInfo } from '../utils/api';
+import { checkIfFollowing, followUser, unfollowUser } from '../utils/followsApi';
 import '../styles/displayprofileheader.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-export default function DisplayProfileHeader() {
+interface DisplayProfileHeaderProps {
+  profileUserId?: number;
+  profileUsername?: string;
+  profileCreatedAt?: string;
+}
+
+export default function DisplayProfileHeader({ 
+  profileUserId, 
+  profileUsername, 
+  profileCreatedAt 
+}: DisplayProfileHeaderProps) {
+  const navigate = useNavigate();
+  const currentUserId = getCurrentUserId();
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [loading, setLoading] = useState(!profileUsername);
+  
+  // Determine which user's profile to show
+  const targetUserId = profileUserId || currentUserId;
+  const isOwnProfile = targetUserId === currentUserId;
+
+  // Fetch user info if not provided
+  useEffect(() => {
+    async function fetchUserInfo() {
+      if (profileUsername && profileCreatedAt) {
+        // Info already provided
+        if (profileUserId) {
+          setUserInfo({ id: profileUserId, username: profileUsername, createdAt: profileCreatedAt });
+        }
+        setLoading(false);
+        return;
+      }
+
+      if (!targetUserId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const info = await getUserById(targetUserId);
+        setUserInfo(info);
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchUserInfo();
+  }, [profileUserId, profileUsername, profileCreatedAt, targetUserId]);
+  
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isToggling, setIsToggling] = useState(false);
+
+  useEffect(() => {
+    async function checkFollowStatus() {
+      if (isOwnProfile || !targetUserId || !currentUserId) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const following = await checkIfFollowing(targetUserId);
+        setIsFollowing(following);
+      } catch (error) {
+        console.error('Failed to check follow status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    checkFollowStatus();
+  }, [targetUserId, currentUserId, isOwnProfile]);
+
+  const handleFollowToggle = async () => {
+    if (!targetUserId || isToggling || isLoading || isOwnProfile) return;
+
+    const previousFollowing = isFollowing;
+    setIsFollowing(!previousFollowing);
+    setIsToggling(true);
+
+    try {
+      if (previousFollowing) {
+        await unfollowUser(targetUserId);
+      } else {
+        await followUser(targetUserId);
+      }
+    } catch (error) {
+      // Revert on error
+      setIsFollowing(previousFollowing);
+      console.error('Failed to toggle follow:', error);
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
+  const handleMessage = () => {
+    
+    navigate('/messages');
+  };
+
+  const handleDeleteAccount = () => {
+    // TODO: Implement delete account functionality
+    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+      console.log('Delete account not yet implemented');
+    }
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  const displayUsername = userInfo?.username || profileUsername || 'Loading...';
+  const displayDate = userInfo?.createdAt ? formatDate(userInfo.createdAt) : (profileCreatedAt ? formatDate(profileCreatedAt) : '');
 
   return (
     <div className="profile-header">
       <div className="profile-header-left">
-        <h1 className='profile-name'><span className="profile-name-at">@</span>Zenty</h1>
-        <span className="profile-creation-date"><i className="bi bi-calendar"></i>Joined November 2025</span>
+        <h1 className='profile-name'><span className="profile-name-at">@</span>{displayUsername}</h1>
+        {displayDate && (
+          <span className="profile-creation-date">
+            <i className="bi bi-calendar"></i>Joined {displayDate}
+          </span>
+        )}
       </div>
       <div className="profile-header-right">
-        <button className="profile-action button-delete-account">
-          <i className="bi bi-exclamation-triangle"></i>
-          Delete Account
-        </button>
-        <button className="profile-action button-message">
-          <i className="bi bi-chat"></i>
-          Message
-        </button>
-        <button className="profile-action button-follow">
-          <i className="bi bi-person-plus"></i>
-          Follow
-        </button>
-        <button className="profile-action button-unfollow">
-          <i className="bi bi-person-dash"></i>
-          Unfollow
-        </button>
+        {isOwnProfile ? (
+          <>
+            <button 
+              className="profile-action button-delete-account"
+              onClick={handleDeleteAccount}
+            >
+              <i className="bi bi-exclamation-triangle"></i>
+              Delete Account
+            </button>
+          </>
+        ) : (
+          <>
+            <button 
+              className="profile-action button-message"
+              onClick={handleMessage}
+            >
+              <i className="bi bi-chat"></i>
+              Message
+            </button>
+            {!isLoading && (
+              <button 
+                className={`profile-action ${isFollowing ? 'button-unfollow' : 'button-follow'}`}
+                onClick={handleFollowToggle}
+                disabled={isToggling}
+              >
+                <i className={`bi ${isFollowing ? 'bi-person-dash' : 'bi-person-plus'}`}></i>
+                {isToggling ? '...' : (isFollowing ? 'Unfollow' : 'Follow')}
+              </button>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

@@ -31,3 +31,29 @@ export function getCurrentUserId(): number | null {
   }
 }
 
+export interface UserInfo {
+  id: number;
+  username: string;
+  createdAt: string;
+}
+
+/**
+ * Get user information by ID
+ */
+export async function getUserById(userId: number): Promise<UserInfo> {
+  const response = await fetch(`/api/Users/${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Failed to get user: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
