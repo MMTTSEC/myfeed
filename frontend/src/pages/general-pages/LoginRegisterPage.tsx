@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { BsPersonFill, BsKeyFill } from "react-icons/bs";
 import '../../styles/loginregisterpage.css';
 
@@ -7,6 +8,7 @@ LoginRegisterPage.route = {
 };
 
 export default function LoginRegisterPage() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
 
   const [username, setUsername] = useState("");
@@ -14,6 +16,14 @@ export default function LoginRegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const [errors, setErrors] = useState<string[]>([]);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/home');
+    }
+  }, [navigate]);
 
   const validateRequired = (value: string, field: string) =>
     value.trim() === "" ? `${field} is required.` : null;
@@ -29,7 +39,7 @@ export default function LoginRegisterPage() {
   const validatePasswordMatch = (pass: string, confirm: string) =>
     pass !== confirm ? "Passwords do not match." : null;
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: string[] = [];
 
@@ -42,10 +52,43 @@ export default function LoginRegisterPage() {
     if (newErrors.length > 0) return setErrors(newErrors);
 
     setErrors([]);
-    console.log("LOGIN SUCCESS", { username, password });
+
+    try {
+      const response = await fetch('/api/Users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      if (response.status === 200) {
+        // Login successful - extract token and redirect
+        const data = await response.json();
+        const token = data.token;
+        
+        if (token) {
+          localStorage.setItem('token', token);
+          navigate('/home');
+        } else {
+          setErrors(["Login successful but no token received."]);
+        }
+      } else if (response.status === 401) {
+        // Unauthorized - get error message from API
+        const errorData = await response.text();
+        setErrors([errorData || "Invalid username or password."]);
+      } else {
+        setErrors(["An unexpected error occurred. Please try again."]);
+      }
+    } catch (error) {
+      setErrors(["Network error. Please check your connection and try again."]);
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: string[] = [];
 
@@ -67,7 +110,36 @@ export default function LoginRegisterPage() {
     if (newErrors.length > 0) return setErrors(newErrors);
 
     setErrors([]);
-    console.log("REGISTER SUCCESS", { username, password });
+
+    try {
+      const response = await fetch('/api/Users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      if (response.status === 201) {
+        // Registration successful - switch to login tab
+        setActiveTab("login");
+        setUsername("");
+        setPassword("");
+        setConfirmPassword("");
+        setErrors([]);
+      } else if (response.status === 400) {
+        // Bad request - get error message from API
+        const errorData = await response.text();
+        setErrors([errorData || "Registration failed. Please try again."]);
+      } else {
+        setErrors(["An unexpected error occurred. Please try again."]);
+      }
+    } catch (error) {
+      setErrors(["Network error. Please check your connection and try again."]);
+    }
   };
 
   return (
