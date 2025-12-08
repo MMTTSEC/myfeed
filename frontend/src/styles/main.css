@@ -36,6 +36,7 @@
   --color-green-hover: #3F9915;
   --color-yellow: #B7A22E;
   --color-yellow-hover: #998515;
+  --color-pink: #D7207E;
 
   /* Fonts */
   --font-primary: 'Open Sans', 'Avenir', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -59,6 +60,7 @@
   --shadow-background: 0px 0px 10px 5px rgba(var(--color-primary-rgb), 0.25);
   --shadow-text: 0px 0px 2px rgba(0, 0, 0, 0.25);
   --shadow-text-avatar: 0px 0px 2px rgba(255, 255, 255, 1);
+  --shadow-likes: 0px 0px 3px rgba(215, 32, 126, 1);
 }
 
 /* General Styling */

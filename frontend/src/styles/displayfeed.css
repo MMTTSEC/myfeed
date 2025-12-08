@@ -71,3 +71,33 @@
   padding: var(--spacing-standard) var(--spacing-big);
   color: var(--color-gray-dark);
 }
+
+.feed-container article.post-card .post-footer {
+  padding-top: var(--spacing-standard);
+  padding-right: var(--spacing-big);
+  
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.feed-container article.post-card .post-footer .post-likes-container .toggle-likes {
+  display: flex;
+  align-items: center;
+  color: var(--color-gray);
+  cursor: pointer;
+}
+
+.feed-container article.post-card .post-footer .post-likes-container .toggle-likes.liked {
+  color: var(--color-pink);
+  text-shadow: var(--shadow-likes);
+}
+
+.feed-container article.post-card .post-footer .post-likes-container .toggle-likes:hover {
+  color: var(--color-pink);
+  text-decoration: none;
+  text-shadow: var(--shadow-likes);
+}
+
+.feed-container article.post-card .post-footer .post-likes-container .bi {
+  padding-right: var(--spacing-small);
+}

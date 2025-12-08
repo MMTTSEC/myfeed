@@ -19,24 +19,28 @@ function fetchPostsOfType(type: string): Post[] {
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-04T22:05:00',
+          likesCount: '362',
         },
         {
           id: '2',
           author: 'MMTTSEC',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05T16:14:00',
+          likesCount: '794',
         },
         {
           id: '3',
           author: 'mycookie5',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-06T13:26:00',
+          likesCount: '173',
         },
         {
           id: '4',
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-06T22:30:00',
+          likesCount: '999',
         },
       ];
     case 'followedPosts':
@@ -46,12 +50,14 @@ function fetchPostsOfType(type: string): Post[] {
           author: 'MMTTSEC',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-05T16:14:00',
+          likesCount: '794',
         },
         {
           id: '3',
           author: 'mycookie5',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-06T13:26:00',
+          likesCount: '173',
         },
       ];
     case 'userPosts':
@@ -61,12 +67,14 @@ function fetchPostsOfType(type: string): Post[] {
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-04T22:05:00',
+          likesCount: '362',
         },
         {
           id: '4',
           author: 'Zenty',
           content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
           createdAt: '2025-12-06T22:30:00',
+          likesCount: '999',
         },
       ];
     default:
@@ -96,6 +104,18 @@ function PostCard({ post }: { post: Post }) {
         {post.content}
       </div>
 
+      <div className="post-footer">
+        <div className="post-likes-container">
+          <a
+            href="#"
+            className={`toggle-likes ${post.author === 'MMTTSEC' ? 'liked' : ''}`}
+          >
+            <i className="bi bi-heart"></i>
+            <span className="post-likes">{post.likesCount}</span>
+          </a>
+        </div>
+      </div>
+
     </article>
   );
 }
@@ -103,7 +123,6 @@ function PostCard({ post }: { post: Post }) {
 export default function DisplayFeed({ currentPath }: NavigationProps) {
   const feedType = getFeedType(currentPath);
   const posts = fetchPostsOfType(feedType);
-  // show newest posts first
   const sortedPosts = posts.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   if (!feedType) {
