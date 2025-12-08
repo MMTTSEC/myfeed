@@ -154,6 +154,38 @@ public class PostsController : ControllerBase
         }
     }
 
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllPosts()
+    {
+        try
+        {
+            var posts = await _postService.GetAllPostsAsync();
+            var postDtos = new List<object>();
+
+            foreach (var post in posts)
+            {
+                var author = await _userService.GetUserByIdAsync(post.AuthorUserId);
+                var authorUsername = author?.Username ?? "Unknown";
+
+                postDtos.Add(new
+                {
+                    id = post.Id,
+                    authorId = post.AuthorUserId,
+                    author = authorUsername,
+                    title = post.Title,
+                    body = post.Body,
+                    createdAt = post.CreatedAt
+                });
+            }
+
+            return Ok(postDtos);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while retrieving posts.");
+        }
+    }
+
     [HttpGet("feed")]
     public async Task<IActionResult> GetFeed()
     {

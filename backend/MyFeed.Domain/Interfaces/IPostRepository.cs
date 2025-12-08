@@ -11,6 +11,7 @@ namespace MyFeed.Domain.Interfaces
     public interface IPostRepository
     {
         Task<Post?> GetByIdAsync(int id);
+        Task<IEnumerable<Post>> GetAllAsync();
         Task<IEnumerable<Post>> GetPostsByUserAsync(int userId);   
         Task<IEnumerable<Post>> GetFeedAsync(int userId);          
         Task AddAsync(Post post);

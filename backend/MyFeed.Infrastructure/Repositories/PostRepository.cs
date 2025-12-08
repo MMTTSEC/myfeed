@@ -22,6 +22,13 @@ namespace MyFeed.Infrastructure.Repositories
             return await _context.Posts.FindAsync(id);
         }
 
+        public async Task<IEnumerable<Post>> GetAllAsync()
+        {
+            return await _context.Posts
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Post>> GetPostsByUserAsync(int userId)
         {
             return await _context.Posts

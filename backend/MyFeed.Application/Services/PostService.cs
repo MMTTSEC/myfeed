@@ -61,6 +61,11 @@ namespace MyFeed.Application.Services
             return await _postRepo.GetByIdAsync(id);
         }
 
+        public async Task<IEnumerable<Post>> GetAllPostsAsync()
+        {
+            return await _postRepo.GetAllAsync();
+        }
+
         public async Task<IEnumerable<Post>> GetPostsByUserAsync(int userId)
         {
             return await _postRepo.GetPostsByUserAsync(userId);
