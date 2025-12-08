@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import type Message from '../interfaces/Message';
 import { getConversation, type MessageResponse } from '../utils/messagesApi';
 import { getCurrentUserId } from '../utils/api';
 import '../styles/displaymessages.css';
@@ -24,7 +23,7 @@ function MessageCard({ message, currentUserId }: MessageCardProps) {
   const isOwnMessage = senderId === userId && !isNaN(senderId) && !isNaN(userId);
   
 
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.log(`Message ${message.id}: senderId=${senderId}, currentUserId=${userId}, isOwnMessage=${isOwnMessage}, sender="${message.sender}"`);
   }
   
