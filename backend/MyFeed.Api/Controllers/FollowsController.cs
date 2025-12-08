@@ -63,12 +63,12 @@ public class FollowsController : ControllerBase
     }
 
     [HttpGet("following")]
-    public async Task<IActionResult> GetFollowing()
+    public async Task<IActionResult> GetFollowing([FromQuery] int? userId = null)
     {
         try
         {
-            var userId = HttpContext.GetCurrentUserIdRequired();
-            var followeeIds = await _followService.GetFollowingAsync(userId);
+            var targetUserId = userId ?? HttpContext.GetCurrentUserIdRequired();
+            var followeeIds = await _followService.GetFollowingAsync(targetUserId);
             
             // Get user info for each followee ID
             var followees = new List<object>();
@@ -94,6 +94,40 @@ public class FollowsController : ControllerBase
         catch (Exception)
         {
             return StatusCode(500, "An error occurred while retrieving following list.");
+        }
+    }
+
+    [HttpGet("followers/{userId}")]
+    public async Task<IActionResult> GetFollowers(int userId)
+    {
+        try
+        {
+            var followerIds = await _followService.GetFollowersAsync(userId);
+            
+            // Get user info for each follower ID
+            var followers = new List<object>();
+            foreach (var followerId in followerIds)
+            {
+                var user = await _userService.GetUserByIdAsync(followerId);
+                if (user != null)
+                {
+                    followers.Add(new
+                    {
+                        id = user.Id,
+                        username = user.Username
+                    });
+                }
+            }
+            
+            return Ok(followers);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while retrieving followers list.");
         }
     }
 

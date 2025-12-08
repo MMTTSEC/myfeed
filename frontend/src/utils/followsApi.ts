@@ -63,6 +63,46 @@ export async function getFollowing(): Promise<FollowingUser[]> {
 }
 
 /**
+ * Get list of users that a specific user is following
+ */
+export async function getFollowingForUser(userId: number): Promise<FollowingUser[]> {
+  const response = await fetch(`/api/Follows/following?userId=${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Failed to get following list: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+/**
+ * Get list of users that follow a specific user (followers)
+ */
+export async function getFollowers(userId: number): Promise<FollowingUser[]> {
+  const response = await fetch(`/api/Follows/followers/${userId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Failed to get followers list: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+/**
  * Check if current user is following another user
  */
 export async function checkIfFollowing(followeeId: number): Promise<boolean> {
