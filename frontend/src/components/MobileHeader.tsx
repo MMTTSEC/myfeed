@@ -8,32 +8,38 @@ function isProfileOrMessagesPage(currentPath: string): boolean {
 function toggleLeftColumnActive() {
   const left = document.querySelector('section.left-column');
   const right = document.querySelector('section.right-column');
+  const center = document.querySelector('section.center-column');
   if (!left) return;
 
   const leftIsActive = left.classList.contains('active');
   if (leftIsActive) {
     // turn left off
     left.classList.remove('active');
+    if (center) center.classList.remove('hidden');
   } else {
     // turn left on and ensure right is off
     left.classList.add('active');
     if (right) right.classList.remove('active');
+    if (center) center.classList.add('hidden');
   }
 }
 
 function toggleRightColumnActive() {
   const left = document.querySelector('section.left-column');
   const right = document.querySelector('section.right-column');
+  const center = document.querySelector('section.center-column');
   if (!right) return;
 
   const rightIsActive = right.classList.contains('active');
   if (rightIsActive) {
     // turn right off
     right.classList.remove('active');
+    if (center) center.classList.remove('hidden');
   } else {
     // turn right on and ensure left is off
     right.classList.add('active');
     if (left) left.classList.remove('active');
+    if (center) center.classList.add('hidden');
   }
 }
 

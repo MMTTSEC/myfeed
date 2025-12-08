@@ -25,6 +25,7 @@ header .profile-header .profile-header-left h1 span.profile-name-at {
 }
 
 header .profile-header .profile-header-left .profile-creation-date {
+  min-width: 200px;
   font-size: var(--font-size-misc);
   padding-top: var(--spacing-small);
 }

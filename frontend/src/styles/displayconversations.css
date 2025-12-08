@@ -1,6 +1,6 @@
 .conversations-container {
   width: 100%;
-  margin-left: var(--spacing-standard);
+  padding-left: var(--spacing-standard);
 
   display: flex;
   flex-direction: column;

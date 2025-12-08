@@ -54,16 +54,82 @@
   }
 
   main section.left-column {
-    width: 100%;
     display: none;
+  }
+
+  main section.left-column.active {
+    background-color: var(--color-background-primary);
+    width: 100%;
+    min-height: calc(100vh - 69px);
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 69px;
+  }
+
+  main section.left-column.active .left-column-container {
+    width: initial;
+    display: flex;
+    gap: calc(var(--spacing-large) * 2);
+  }
+
+  main section.left-column.active nav.navigation-menu .nav-list li.nav-item.active {
+    background: none;
+    background-color: var(--color-primary);
+    border-radius: var(--border-radius-standard);
+  }
+
+  main section.left-column.active nav.navigation-menu .nav-list li.nav-item:hover {
+    padding-left: 0px;
   }
 
   main section.center-column {
-    width: 100%
+    width: 100%;
+    min-height: calc(100vh - 69px);
+  }
+
+  main section.center-column.hidden {
+    display: none;
+  }
+
+  main section.center-column .main-container {
+    min-height: calc(100vh - 69px);
   }
 
   main section.right-column {
-    width: 100%;
     display: none;
+  }
+
+  main section.right-column.active {
+    background-color: var(--color-background-primary);
+    width: 100%;
+    min-height: calc(100vh - 69px);
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 69px;
+  }
+
+  main section.right-column.active div {
+    display: flex;
+    align-items: center;
+  }
+
+}
+
+@media (max-width: 500px) {
+  main section.center-column.UserProfilePage header.page-header .profile-header {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--spacing-large);
+    align-items: flex-start;
+  }
+  
+  main section.center-column.UserProfilePage header.page-header .profile-header .profile-header-right {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    margin-left: 0;
   }
 }
