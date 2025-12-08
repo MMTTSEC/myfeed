@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Interfaces;
 using MyFeed.Api.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace MyFeed.Api.Controllers;
 
@@ -92,33 +94,69 @@ public class PostsController : ControllerBase
         }
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetPostById(int id)
+    // Specific routes must come before parameterized routes
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllPosts()
     {
         try
         {
-            var post = await _postService.GetPostByIdAsync(id);
-            if (post == null)
+            var posts = await _postService.GetAllPostsAsync();
+            var postDtos = new List<object>();
+
+            foreach (var post in posts)
             {
-                return NotFound();
+                var author = await _userService.GetUserByIdAsync(post.AuthorUserId);
+                var authorUsername = author?.Username ?? "Unknown";
+
+                postDtos.Add(new
+                {
+                    id = post.Id,
+                    authorId = post.AuthorUserId,
+                    author = authorUsername,
+                    title = post.Title,
+                    body = post.Body,
+                    createdAt = post.CreatedAt
+                });
             }
 
-            var author = await _userService.GetUserByIdAsync(post.AuthorUserId);
-            var authorUsername = author?.Username ?? "Unknown";
+            return Ok(postDtos);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred while retrieving posts: {ex.Message}");
+        }
+    }
 
-            return Ok(new
+    [HttpGet("feed")]
+    public async Task<IActionResult> GetFeed()
+    {
+        try
+        {
+            var userId = HttpContext.GetCurrentUserIdRequired();
+            var posts = await _postService.GetFeedAsync(userId);
+            var postDtos = new List<object>();
+
+            foreach (var post in posts)
             {
-                id = post.Id,
-                authorId = post.AuthorUserId,
-                author = authorUsername,
-                title = post.Title,
-                body = post.Body,
-                createdAt = post.CreatedAt
-            });
+                var author = await _userService.GetUserByIdAsync(post.AuthorUserId);
+                var authorUsername = author?.Username ?? "Unknown";
+
+                postDtos.Add(new
+                {
+                    id = post.Id,
+                    authorId = post.AuthorUserId,
+                    author = authorUsername,
+                    title = post.Title,
+                    body = post.Body,
+                    createdAt = post.CreatedAt
+                });
+            }
+
+            return Ok(postDtos);
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while retrieving the post.");
+            return StatusCode(500, "An error occurred while retrieving the feed.");
         }
     }
 
@@ -154,68 +192,33 @@ public class PostsController : ControllerBase
         }
     }
 
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAllPosts()
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetPostById(int id)
     {
         try
         {
-            var posts = await _postService.GetAllPostsAsync();
-            var postDtos = new List<object>();
-
-            foreach (var post in posts)
+            var post = await _postService.GetPostByIdAsync(id);
+            if (post == null)
             {
-                var author = await _userService.GetUserByIdAsync(post.AuthorUserId);
-                var authorUsername = author?.Username ?? "Unknown";
-
-                postDtos.Add(new
-                {
-                    id = post.Id,
-                    authorId = post.AuthorUserId,
-                    author = authorUsername,
-                    title = post.Title,
-                    body = post.Body,
-                    createdAt = post.CreatedAt
-                });
+                return NotFound();
             }
 
-            return Ok(postDtos);
+            var author = await _userService.GetUserByIdAsync(post.AuthorUserId);
+            var authorUsername = author?.Username ?? "Unknown";
+
+            return Ok(new
+            {
+                id = post.Id,
+                authorId = post.AuthorUserId,
+                author = authorUsername,
+                title = post.Title,
+                body = post.Body,
+                createdAt = post.CreatedAt
+            });
         }
         catch (Exception)
         {
-            return StatusCode(500, "An error occurred while retrieving posts.");
-        }
-    }
-
-    [HttpGet("feed")]
-    public async Task<IActionResult> GetFeed()
-    {
-        try
-        {
-            var userId = HttpContext.GetCurrentUserIdRequired();
-            var posts = await _postService.GetFeedAsync(userId);
-            var postDtos = new List<object>();
-
-            foreach (var post in posts)
-            {
-                var author = await _userService.GetUserByIdAsync(post.AuthorUserId);
-                var authorUsername = author?.Username ?? "Unknown";
-
-                postDtos.Add(new
-                {
-                    id = post.Id,
-                    authorId = post.AuthorUserId,
-                    author = authorUsername,
-                    title = post.Title,
-                    body = post.Body,
-                    createdAt = post.CreatedAt
-                });
-            }
-
-            return Ok(postDtos);
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "An error occurred while retrieving the feed.");
+            return StatusCode(500, "An error occurred while retrieving the post.");
         }
     }
 }
