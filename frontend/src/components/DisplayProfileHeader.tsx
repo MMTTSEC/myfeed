@@ -10,10 +10,6 @@ export default function DisplayProfileHeader() {
         <span className="profile-creation-date"><i className="bi bi-calendar"></i>Joined November 2025</span>
       </div>
       <div className="profile-header-right">
-        <button className="profile-action button-clear-messages">
-          <i className="bi bi-exclamation-circle"></i>
-          Clear Messages
-        </button>
         <button className="profile-action button-delete-account">
           <i className="bi bi-exclamation-triangle"></i>
           Delete Account
