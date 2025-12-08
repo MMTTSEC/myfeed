@@ -3,4 +3,5 @@ export default interface Post {
   author: string;
   createdAt: string;
   content: string;
+  likesCount: string;
 }
