@@ -18,14 +18,25 @@ function MessageCard({ message, currentUserId }: MessageCardProps) {
     return `${datePart} · ${timePart}`;
   };
 
-  const isOwnMessage = message.senderId === currentUserId;
-  const displayName = isOwnMessage ? 'YOU' : message.sender;
+  
+  const senderId = Number(message.senderId);
+  const userId = Number(currentUserId);
+  const isOwnMessage = senderId === userId && !isNaN(senderId) && !isNaN(userId);
+  
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`Message ${message.id}: senderId=${senderId}, currentUserId=${userId}, isOwnMessage=${isOwnMessage}, sender="${message.sender}"`);
+  }
+  
+  const avatarInitial = message.sender && message.sender.length > 0 
+    ? message.sender.charAt(0).toUpperCase() 
+    : '?';
 
   return (
     <article className={isOwnMessage ? 'message-card your-message' : 'message-card'}>
       <div className="message-header"> 
         <figure className="message-sender-avatar">
-          <strong className="message-sender-avatar-initial">{message.sender.charAt(0).toUpperCase()}</strong>
+          <strong className="message-sender-avatar-initial">{avatarInitial}</strong>
         </figure>
         <span className="message-info">
           {isOwnMessage ? (
@@ -75,7 +86,16 @@ export default function DisplayMessages({ selectedUserId, refreshTrigger }: Disp
 
       try {
         const conversation = await getConversation(selectedUserId);
-        setMessages(conversation);
+        const sortedMessages = [...conversation].sort((a, b) => {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          if (dateA !== dateB) {
+            return dateA - dateB;
+          }
+         
+          return a.id - b.id;
+        });
+        setMessages(sortedMessages);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load messages');
       } finally {
@@ -117,8 +137,12 @@ export default function DisplayMessages({ selectedUserId, refreshTrigger }: Disp
 
   return (
     <div className="messages-container">
-      {messages.map((message) => (
-        <MessageCard key={message.id} message={message} currentUserId={currentUserId} />
+      {messages.map((message, index) => (
+        <MessageCard 
+          key={`msg-${message.id}-${index}`} 
+          message={message} 
+          currentUserId={currentUserId} 
+        />
       ))}
       <div ref={messagesEndRef} />
     </div>
