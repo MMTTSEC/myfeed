@@ -102,8 +102,11 @@ export default function DisplayProfileHeader({
   };
 
   const handleMessage = () => {
-    
-    navigate('/messages');
+    if (targetUserId) {
+      navigate(`/messages/${targetUserId}`);
+    } else {
+      navigate('/messages');
+    }
   };
 
   const handleDeleteAccount = () => {

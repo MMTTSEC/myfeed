@@ -34,7 +34,7 @@
 }
 
 .messages-container article.message-card .message-header figure.message-sender-avatar {
-  background-color: var(--color-primary);
+  background-color: var(--color-gray-dark);
   box-shadow: var(--shadow-background);
   width: 45px;
   height: 45px;
@@ -47,6 +47,7 @@
 }
 
 .messages-container article.message-card.your-message .message-header figure.message-sender-avatar {
+  background-color: var(--color-primary);
   margin-right: 0;
   margin-left: var(--spacing-big);
 }
