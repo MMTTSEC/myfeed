@@ -5,13 +5,18 @@ function isThisAProfilePage( currentPath : string ) : boolean {
   return currentPath.startsWith('/profile/');
 }
 
-export default function HandlePageHeaders({ currentPath }: { currentPath: string }) {
+interface HandlePageHeadersProps {
+  currentPath: string;
+  onPostCreated?: () => void;
+}
+
+export default function HandlePageHeaders({ currentPath, onPostCreated }: HandlePageHeadersProps) {
   return <>
     <header className="page-header">
       {isThisAProfilePage(currentPath) && (
         <DisplayProfileHeader />
       )}
-        <WritePost />
+        <WritePost onPostCreated={onPostCreated} />
     </header>
   </>
 }

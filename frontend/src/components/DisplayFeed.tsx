@@ -1,86 +1,10 @@
+import { useState, useEffect } from 'react';
 import type NavigationProps from '../interfaces/NavigationProps';
 import type Post from '../interfaces/Post';
+import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost } from '../utils/postsApi';
+import { getCurrentUserId } from '../utils/api';
 import '../styles/displayfeed.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
-function getFeedType(path: string): string {
-  if (path === '/home') return 'allPosts';
-  if (path === '/feed') return 'followedPosts';
-  if (path.startsWith('/profile/')) return 'userPosts';
-  return '';
-}
-
-function fetchPostsOfType(type: string): Post[] {
-  switch (type) {
-    case 'allPosts':
-      return [
-        {
-          id: '1',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-04T22:05:00',
-          likesCount: '362',
-        },
-        {
-          id: '2',
-          author: 'MMTTSEC',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05T16:14:00',
-          likesCount: '794',
-        },
-        {
-          id: '3',
-          author: 'mycookie5',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T13:26:00',
-          likesCount: '173',
-        },
-        {
-          id: '4',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T22:30:00',
-          likesCount: '999',
-        },
-      ];
-    case 'followedPosts':
-      return [
-        {
-          id: '2',
-          author: 'MMTTSEC',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05T16:14:00',
-          likesCount: '794',
-        },
-        {
-          id: '3',
-          author: 'mycookie5',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T13:26:00',
-          likesCount: '173',
-        },
-      ];
-    case 'userPosts':
-      return [
-        {
-          id: '1',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-04T22:05:00',
-          likesCount: '362',
-        },
-        {
-          id: '4',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T22:30:00',
-          likesCount: '999',
-        },
-      ];
-    default:
-      return [];
-  }
-}
 
 function PostCard({ post }: { post: Post }) {
   const formatDate = (dateString: string) => {
@@ -120,13 +44,61 @@ function PostCard({ post }: { post: Post }) {
   );
 }
 
-export default function DisplayFeed({ currentPath }: NavigationProps) {
-  const feedType = getFeedType(currentPath);
-  const posts = fetchPostsOfType(feedType);
-  const sortedPosts = posts.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+interface DisplayFeedProps extends NavigationProps {
+  refreshTrigger?: number;
+}
 
-  if (!feedType) {
-    return <div className="feed-placeholder">Unknown feed type.</div>;
+export default function DisplayFeed({ currentPath, refreshTrigger }: DisplayFeedProps) {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        let postResponses;
+        
+        if (currentPath === '/home') {
+          postResponses = await getAllPosts();
+        } else if (currentPath === '/feed') {
+          postResponses = await getFeed();
+        } else if (currentPath.startsWith('/profile/')) {
+          const userId = getCurrentUserId();
+          if (!userId) {
+            setError('Unable to get user ID');
+            setLoading(false);
+            return;
+          }
+          postResponses = await getPostsByUser(userId);
+        } else {
+          setError('Unknown feed type');
+          setLoading(false);
+          return;
+        }
+
+        const mappedPosts = postResponses.map(mapPostResponseToPost);
+        // Sort by createdAt (newest first)
+        mappedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setPosts(mappedPosts);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load posts');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, [currentPath, refreshTrigger]);
+
+  if (loading) {
+    return <div className="feed-placeholder">Loading posts...</div>;
+  }
+
+  if (error) {
+    return <div className="feed-placeholder">Error: {error}</div>;
   }
 
   if (posts.length === 0) {
@@ -135,7 +107,7 @@ export default function DisplayFeed({ currentPath }: NavigationProps) {
 
   return (
     <div className="feed-container">
-      {sortedPosts.map((post) => (
+      {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
     </div>

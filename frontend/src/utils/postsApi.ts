@@ -1,4 +1,5 @@
 import { getAuthHeaders } from './api';
+import type Post from '../interfaces/Post';
 
 export interface PostResponse {
   id: number;
@@ -33,6 +34,26 @@ export async function createPost(title: string, body: string): Promise<void> {
   }
 
  
+}
+
+/**
+ * Get all posts
+ */
+export async function getAllPosts(): Promise<PostResponse[]> {
+  const response = await fetch('/api/Posts/all', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Failed to get all posts: ${response.status}`);
+  }
+
+  return await response.json();
 }
 
 /**
@@ -98,3 +119,20 @@ export async function getPostById(id: number): Promise<PostResponse> {
   return await response.json();
 }
 
+/**
+ * Map backend PostResponse to frontend Post format
+ */
+export function mapPostResponseToPost(response: PostResponse): Post {
+  // Combine title and body into content
+  const content = response.title && response.body 
+    ? `${response.title}\n${response.body}`.trim()
+    : response.body || response.title || '';
+  
+  return {
+    id: response.id.toString(),
+    author: response.author,
+    createdAt: response.createdAt,
+    content: content,
+    likesCount: '0' // TODO: Get actual like count from API
+  };
+}
