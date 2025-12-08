@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import type NavigationProps from '../interfaces/NavigationProps';
 import type Post from '../interfaces/Post';
 import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost } from '../utils/postsApi';
@@ -7,7 +8,12 @@ import { getLikeCount, checkIfLiked, likePost, unlikePost } from '../utils/likes
 import '../styles/displayfeed.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-function PostCard({ post }: { post: Post }) {
+interface PostCardProps {
+  post: Post;
+  authorId?: number;
+}
+
+function PostCard({ post, authorId }: PostCardProps) {
   const [likeCount, setLikeCount] = useState<string>(post.likesCount);
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,7 +86,14 @@ function PostCard({ post }: { post: Post }) {
           <strong className="post-author-avatar-initial">{post.author.charAt(0).toUpperCase()}</strong>
         </figure>
         <span className="post-info">
-          <a href="#"><strong className="post-author-at">@</strong><strong className="post-author">{post.author}</strong></a> · {formatDate(post.createdAt)}
+          {authorId ? (
+            <Link to={`/profile/${authorId}`}>
+              <strong className="post-author-at">@</strong><strong className="post-author">{post.author}</strong>
+            </Link>
+          ) : (
+            <a href="#"><strong className="post-author-at">@</strong><strong className="post-author">{post.author}</strong></a>
+          )}
+          {' · '}{formatDate(post.createdAt)}
         </span>
       </div>
 
@@ -108,9 +121,10 @@ function PostCard({ post }: { post: Post }) {
 
 interface DisplayFeedProps extends NavigationProps {
   refreshTrigger?: number;
+  profileUserId?: number;
 }
 
-export default function DisplayFeed({ currentPath, refreshTrigger }: DisplayFeedProps) {
+export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId }: DisplayFeedProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -128,7 +142,8 @@ export default function DisplayFeed({ currentPath, refreshTrigger }: DisplayFeed
         } else if (currentPath === '/feed') {
           postResponses = await getFeed();
         } else if (currentPath.startsWith('/profile/')) {
-          const userId = getCurrentUserId();
+          // Use profileUserId if provided (other user's profile), otherwise current user's profile
+          const userId = profileUserId || getCurrentUserId();
           if (!userId) {
             setError('Unable to get user ID');
             setLoading(false);
@@ -153,7 +168,7 @@ export default function DisplayFeed({ currentPath, refreshTrigger }: DisplayFeed
     }
 
     fetchPosts();
-  }, [currentPath, refreshTrigger]);
+  }, [currentPath, refreshTrigger, profileUserId]);
 
   if (loading) {
     return <div className="feed-placeholder">Loading posts...</div>;
@@ -170,7 +185,7 @@ export default function DisplayFeed({ currentPath, refreshTrigger }: DisplayFeed
   return (
     <div className="feed-container">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} />
+        <PostCard key={post.id} post={post} authorId={post.authorId} />
       ))}
     </div>
   );

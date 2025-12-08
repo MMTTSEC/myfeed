@@ -131,6 +131,7 @@ export function mapPostResponseToPost(response: PostResponse): Post {
   return {
     id: response.id.toString(),
     author: response.author,
+    authorId: response.authorId,
     createdAt: response.createdAt,
     content: content,
     likesCount: '0' // TODO: Get actual like count from API
