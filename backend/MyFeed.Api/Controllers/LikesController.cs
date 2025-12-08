@@ -73,6 +73,25 @@ public class LikesController : ControllerBase
             return StatusCode(500, "An error occurred while retrieving like count.");
         }
     }
+
+    [HttpGet("{postId}/check")]
+    public async Task<IActionResult> CheckIfLiked(int postId)
+    {
+        try
+        {
+            var userId = HttpContext.GetCurrentUserIdRequired();
+            var hasLiked = await _likeService.HasUserLikedPostAsync(userId, postId);
+            return Ok(new { postId, hasLiked });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An error occurred while checking like status.");
+        }
+    }
 }
 
 public class LikePostRequest

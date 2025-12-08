@@ -7,5 +7,6 @@ namespace MyFeed.Application.Interfaces
         Task LikePostAsync(int userId, int postId);
         Task UnlikePostAsync(int userId, int postId);
         Task<int> GetLikeCountAsync(int postId);
+        Task<bool> HasUserLikedPostAsync(int userId, int postId);
     }
 }

@@ -3,10 +3,70 @@ import type NavigationProps from '../interfaces/NavigationProps';
 import type Post from '../interfaces/Post';
 import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost } from '../utils/postsApi';
 import { getCurrentUserId } from '../utils/api';
+import { getLikeCount, checkIfLiked, likePost, unlikePost } from '../utils/likesApi';
 import '../styles/displayfeed.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function PostCard({ post }: { post: Post }) {
+  const [likeCount, setLikeCount] = useState<string>(post.likesCount);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isToggling, setIsToggling] = useState(false);
+  const postId = parseInt(post.id, 10);
+
+  useEffect(() => {
+    async function fetchLikeData() {
+      if (isNaN(postId)) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const [count, hasLiked] = await Promise.all([
+          getLikeCount(postId),
+          checkIfLiked(postId)
+        ]);
+        setLikeCount(count.toString());
+        setIsLiked(hasLiked);
+      } catch (error) {
+        console.error('Failed to fetch like data:', error);
+        // Keep default values on error
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchLikeData();
+  }, [postId]);
+
+  const handleLikeToggle = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (isToggling || isLoading || isNaN(postId)) return;
+
+    const previousLiked = isLiked;
+    const previousCount = parseInt(likeCount, 10);
+
+    // Optimistic update
+    setIsLiked(!previousLiked);
+    setLikeCount(Math.max(0, previousCount + (previousLiked ? -1 : 1)).toString());
+    setIsToggling(true);
+
+    try {
+      if (previousLiked) {
+        await unlikePost(postId);
+      } else {
+        await likePost(postId);
+      }
+    } catch (error) {
+      // Revert on error
+      setIsLiked(previousLiked);
+      setLikeCount(previousCount.toString());
+      console.error('Failed to toggle like:', error);
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
@@ -32,10 +92,12 @@ function PostCard({ post }: { post: Post }) {
         <div className="post-likes-container">
           <a
             href="#"
-            className={`toggle-likes ${post.author === 'MMTTSEC' ? 'liked' : ''}`}
+            onClick={handleLikeToggle}
+            className={`toggle-likes ${isLiked ? 'liked' : ''} ${isToggling ? 'disabled' : ''}`}
+            style={{ cursor: isToggling ? 'wait' : 'pointer' }}
           >
             <i className="bi bi-heart"></i>
-            <span className="post-likes">{post.likesCount}</span>
+            <span className="post-likes">{likeCount}</span>
           </a>
         </div>
       </div>
