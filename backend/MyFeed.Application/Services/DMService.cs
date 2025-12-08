@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MyFeed.Domain.Interfaces;
 using MyFeed.Domain.Entities;
@@ -27,6 +28,11 @@ namespace MyFeed.Application.Services
             // Domain entity enforces content rules
             var dm = new DM(senderId, receiverId, content);
             await _dmRepo.AddAsync(dm);
+        }
+
+        public async Task<IEnumerable<DM>> GetConversationAsync(int userId, int otherUserId)
+        {
+            return await _dmRepo.GetConversationAsync(userId, otherUserId);
         }
     }
 }
