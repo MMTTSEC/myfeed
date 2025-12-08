@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import MobileHeader from '../../components/MobileHeader';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
@@ -11,6 +12,12 @@ UserHomePage.route = {
 };
 
 export default function UserHomePage() {
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handlePostCreated = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <ProtectedRoute>
       <MobileHeader currentPath={UserHomePage.route.path} />
@@ -20,8 +27,8 @@ export default function UserHomePage() {
       </section>
       <section className="center-column UserHomePage">
         <div className="main-container">
-          <HandlePageHeader currentPath={UserHomePage.route.path} />
-          <DisplayFeed currentPath={UserHomePage.route.path} />
+          <HandlePageHeader currentPath={UserHomePage.route.path} onPostCreated={handlePostCreated} />
+          <DisplayFeed currentPath={UserHomePage.route.path} refreshTrigger={refreshTrigger} />
         </div>
       </section>
       <section className="right-column UserHomePage">

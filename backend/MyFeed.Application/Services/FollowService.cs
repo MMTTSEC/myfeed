@@ -61,6 +61,11 @@ namespace MyFeed.Application.Services
 
             return await _followRepo.GetFolloweeIdsAsync(userId);
         }
+
+        public async Task<bool> IsFollowingAsync(int followerId, int followeeId)
+        {
+            return await _followRepo.ExistsAsync(followerId, followeeId);
+        }
     }
 }
 

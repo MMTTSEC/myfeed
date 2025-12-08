@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { sendMessage } from '../utils/messagesApi';
 import '../styles/writemessage.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -26,8 +27,15 @@ function useAutoResize(textAreaRef: React.RefObject<HTMLTextAreaElement | null>,
   }, [value, textAreaRef]);
 }
 
-export default function WriteMessage() {
+interface WriteMessageProps {
+  receiverId: number;
+  onMessageSent?: () => void;
+}
+
+export default function WriteMessage({ receiverId, onMessageSent }: WriteMessageProps) {
   const [text, setText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
   useAutoResize(textAreaRef, text);
@@ -47,11 +55,25 @@ export default function WriteMessage() {
     setText(text + cleanedText);
   }
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!text.trim()) return;
+    if (!text.trim() || isSubmitting) return;
 
-    setText("");
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await sendMessage(receiverId, text.trim());
+      setText("");
+      
+      if (onMessageSent) {
+        onMessageSent();
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to send message');
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -65,10 +87,21 @@ export default function WriteMessage() {
           onChange={handleChange}
           onPaste={handlePaste}
           rows={1}
+          disabled={isSubmitting}
         ></textarea>
 
-        <input type="submit" className="write-message-submit-button" value="Send" />
+        <input 
+          type="submit" 
+          className="write-message-submit-button" 
+          value={isSubmitting ? "Sending..." : "Send"}
+          disabled={isSubmitting || !text.trim()}
+        />
       </form>
+      {error && (
+        <div style={{ color: 'red', marginTop: '8px', fontSize: '14px' }}>
+          {error}
+        </div>
+      )}
     </div>
   );
 }

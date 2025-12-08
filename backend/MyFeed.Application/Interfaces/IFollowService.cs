@@ -8,5 +8,6 @@ namespace MyFeed.Application.Interfaces
         Task FollowUserAsync(int followerId, int followeeId);
         Task UnfollowUserAsync(int followerId, int followeeId);
         Task<IEnumerable<int>> GetFollowingAsync(int userId);
+        Task<bool> IsFollowingAsync(int followerId, int followeeId);
     }
 }

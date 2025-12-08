@@ -62,6 +62,11 @@ namespace MyFeed.Application.Services
 
             return await _likeRepo.CountForPostAsync(postId);
         }
+
+        public async Task<bool> HasUserLikedPostAsync(int userId, int postId)
+        {
+            return await _likeRepo.ExistsAsync(userId, postId);
+        }
     }
 }
 

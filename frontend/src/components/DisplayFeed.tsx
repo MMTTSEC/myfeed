@@ -1,88 +1,78 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import type NavigationProps from '../interfaces/NavigationProps';
 import type Post from '../interfaces/Post';
+import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost } from '../utils/postsApi';
+import { getCurrentUserId } from '../utils/api';
+import { getLikeCount, checkIfLiked, likePost, unlikePost } from '../utils/likesApi';
 import '../styles/displayfeed.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-function getFeedType(path: string): string {
-  if (path === '/home') return 'allPosts';
-  if (path === '/feed') return 'followedPosts';
-  if (path.startsWith('/profile/')) return 'userPosts';
-  return '';
+interface PostCardProps {
+  post: Post;
+  authorId?: number;
 }
 
-function fetchPostsOfType(type: string): Post[] {
-  switch (type) {
-    case 'allPosts':
-      return [
-        {
-          id: '1',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-04T22:05:00',
-          likesCount: '362',
-        },
-        {
-          id: '2',
-          author: 'MMTTSEC',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05T16:14:00',
-          likesCount: '794',
-        },
-        {
-          id: '3',
-          author: 'mycookie5',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T13:26:00',
-          likesCount: '173',
-        },
-        {
-          id: '4',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T22:30:00',
-          likesCount: '999',
-        },
-      ];
-    case 'followedPosts':
-      return [
-        {
-          id: '2',
-          author: 'MMTTSEC',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-05T16:14:00',
-          likesCount: '794',
-        },
-        {
-          id: '3',
-          author: 'mycookie5',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T13:26:00',
-          likesCount: '173',
-        },
-      ];
-    case 'userPosts':
-      return [
-        {
-          id: '1',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-04T22:05:00',
-          likesCount: '362',
-        },
-        {
-          id: '4',
-          author: 'Zenty',
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex.',
-          createdAt: '2025-12-06T22:30:00',
-          likesCount: '999',
-        },
-      ];
-    default:
-      return [];
-  }
-}
+function PostCard({ post, authorId }: PostCardProps) {
+  const [likeCount, setLikeCount] = useState<string>(post.likesCount);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isToggling, setIsToggling] = useState(false);
+  const postId = parseInt(post.id, 10);
 
-function PostCard({ post }: { post: Post }) {
+  useEffect(() => {
+    async function fetchLikeData() {
+      if (isNaN(postId)) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const [count, hasLiked] = await Promise.all([
+          getLikeCount(postId),
+          checkIfLiked(postId)
+        ]);
+        setLikeCount(count.toString());
+        setIsLiked(hasLiked);
+      } catch (error) {
+        console.error('Failed to fetch like data:', error);
+        // Keep default values on error
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchLikeData();
+  }, [postId]);
+
+  const handleLikeToggle = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    if (isToggling || isLoading || isNaN(postId)) return;
+
+    const previousLiked = isLiked;
+    const previousCount = parseInt(likeCount, 10);
+
+    // Optimistic update
+    setIsLiked(!previousLiked);
+    setLikeCount(Math.max(0, previousCount + (previousLiked ? -1 : 1)).toString());
+    setIsToggling(true);
+
+    try {
+      if (previousLiked) {
+        await unlikePost(postId);
+      } else {
+        await likePost(postId);
+      }
+    } catch (error) {
+      // Revert on error
+      setIsLiked(previousLiked);
+      setLikeCount(previousCount.toString());
+      console.error('Failed to toggle like:', error);
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
@@ -96,7 +86,14 @@ function PostCard({ post }: { post: Post }) {
           <strong className="post-author-avatar-initial">{post.author.charAt(0).toUpperCase()}</strong>
         </figure>
         <span className="post-info">
-          <a href="#"><strong className="post-author-at">@</strong><strong className="post-author">{post.author}</strong></a> · {formatDate(post.createdAt)}
+          {authorId ? (
+            <Link to={`/profile/${authorId}`}>
+              <strong className="post-author-at">@</strong><strong className="post-author">{post.author}</strong>
+            </Link>
+          ) : (
+            <a href="#"><strong className="post-author-at">@</strong><strong className="post-author">{post.author}</strong></a>
+          )}
+          {' · '}{formatDate(post.createdAt)}
         </span>
       </div>
 
@@ -108,10 +105,12 @@ function PostCard({ post }: { post: Post }) {
         <div className="post-likes-container">
           <a
             href="#"
-            className={`toggle-likes ${post.author === 'MMTTSEC' ? 'liked' : ''}`}
+            onClick={handleLikeToggle}
+            className={`toggle-likes ${isLiked ? 'liked' : ''} ${isToggling ? 'disabled' : ''}`}
+            style={{ cursor: isToggling ? 'wait' : 'pointer' }}
           >
             <i className="bi bi-heart"></i>
-            <span className="post-likes">{post.likesCount}</span>
+            <span className="post-likes">{likeCount}</span>
           </a>
         </div>
       </div>
@@ -120,13 +119,63 @@ function PostCard({ post }: { post: Post }) {
   );
 }
 
-export default function DisplayFeed({ currentPath }: NavigationProps) {
-  const feedType = getFeedType(currentPath);
-  const posts = fetchPostsOfType(feedType);
-  const sortedPosts = posts.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+interface DisplayFeedProps extends NavigationProps {
+  refreshTrigger?: number;
+  profileUserId?: number;
+}
 
-  if (!feedType) {
-    return <div className="feed-placeholder">Unknown feed type.</div>;
+export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId }: DisplayFeedProps) {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchPosts() {
+      setLoading(true);
+      setError(null);
+
+      try {
+        let postResponses;
+        
+        if (currentPath === '/home') {
+          postResponses = await getAllPosts();
+        } else if (currentPath === '/feed') {
+          postResponses = await getFeed();
+        } else if (currentPath.startsWith('/profile/')) {
+          // Use profileUserId if provided (other user's profile), otherwise current user's profile
+          const userId = profileUserId || getCurrentUserId();
+          if (!userId) {
+            setError('Unable to get user ID');
+            setLoading(false);
+            return;
+          }
+          postResponses = await getPostsByUser(userId);
+        } else {
+          setError('Unknown feed type');
+          setLoading(false);
+          return;
+        }
+
+        const mappedPosts = postResponses.map(mapPostResponseToPost);
+        // Sort by createdAt (newest first)
+        mappedPosts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setPosts(mappedPosts);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load posts');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchPosts();
+  }, [currentPath, refreshTrigger, profileUserId]);
+
+  if (loading) {
+    return <div className="feed-placeholder">Loading posts...</div>;
+  }
+
+  if (error) {
+    return <div className="feed-placeholder">Error: {error}</div>;
   }
 
   if (posts.length === 0) {
@@ -135,8 +184,8 @@ export default function DisplayFeed({ currentPath }: NavigationProps) {
 
   return (
     <div className="feed-container">
-      {sortedPosts.map((post) => (
-        <PostCard key={post.id} post={post} />
+      {posts.map((post) => (
+        <PostCard key={post.id} post={post} authorId={post.authorId} />
       ))}
     </div>
   );
