@@ -36,6 +36,33 @@ header .profile-header .profile-header-left .profile-creation-date i.bi {
   padding-left: 2px;
 }
 
+header .profile-header .profile-header-left .profile-stats {
+  display: flex;
+  gap: var(--spacing-large);
+  margin-top: var(--spacing-standard);
+}
+
+header .profile-header .profile-header-left .profile-stats .profile-stat-button {
+  background: none;
+  border: none;
+  color: var(--color-white);
+  font-size: var(--font-size-misc);
+  cursor: pointer;
+  padding: var(--spacing-small) 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+header .profile-header .profile-header-left .profile-stats .profile-stat-button:hover {
+  color: var(--color-primary);
+}
+
+header .profile-header .profile-header-left .profile-stats .profile-stat-button strong {
+  color: var(--color-primary);
+  margin-right: 4px;
+}
+
 header .profile-header .profile-header-right {
   margin-left: var(--spacing-standard);
   display: flex;

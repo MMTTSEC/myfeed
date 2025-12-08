@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUserId, getUserById, type UserInfo } from '../utils/api';
-import { checkIfFollowing, followUser, unfollowUser } from '../utils/followsApi';
+import { checkIfFollowing, followUser, unfollowUser, getFollowers, getFollowingForUser } from '../utils/followsApi';
+import FollowersFollowingModal from './FollowersFollowingModal';
 import '../styles/displayprofileheader.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -19,7 +20,6 @@ export default function DisplayProfileHeader({
   const navigate = useNavigate();
   const currentUserId = getCurrentUserId();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-  const [loading, setLoading] = useState(!profileUsername);
   
   // Determine which user's profile to show
   const targetUserId = profileUserId || currentUserId;
@@ -33,12 +33,10 @@ export default function DisplayProfileHeader({
         if (profileUserId) {
           setUserInfo({ id: profileUserId, username: profileUsername, createdAt: profileCreatedAt });
         }
-        setLoading(false);
         return;
       }
 
       if (!targetUserId) {
-        setLoading(false);
         return;
       }
 
@@ -47,8 +45,6 @@ export default function DisplayProfileHeader({
         setUserInfo(info);
       } catch (error) {
         console.error('Failed to fetch user info:', error);
-      } finally {
-        setLoading(false);
       }
     }
 
@@ -58,6 +54,10 @@ export default function DisplayProfileHeader({
   const [isFollowing, setIsFollowing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isToggling, setIsToggling] = useState(false);
+  const [followersCount, setFollowersCount] = useState<number | null>(null);
+  const [followingCount, setFollowingCount] = useState<number | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalTab, setModalTab] = useState<'followers' | 'following'>('followers');
 
   useEffect(() => {
     async function checkFollowStatus() {
@@ -78,6 +78,26 @@ export default function DisplayProfileHeader({
 
     checkFollowStatus();
   }, [targetUserId, currentUserId, isOwnProfile]);
+
+  // Fetch follower and following counts
+  useEffect(() => {
+    async function fetchCounts() {
+      if (!targetUserId) return;
+
+      try {
+        const [followers, following] = await Promise.all([
+          getFollowers(targetUserId),
+          getFollowingForUser(targetUserId)
+        ]);
+        setFollowersCount(followers.length);
+        setFollowingCount(following.length);
+      } catch (error) {
+        console.error('Failed to fetch follower/following counts:', error);
+      }
+    }
+
+    fetchCounts();
+  }, [targetUserId]);
 
   const handleFollowToggle = async () => {
     if (!targetUserId || isToggling || isLoading || isOwnProfile) return;
@@ -125,16 +145,52 @@ export default function DisplayProfileHeader({
   const displayUsername = userInfo?.username || profileUsername || 'Loading...';
   const displayDate = userInfo?.createdAt ? formatDate(userInfo.createdAt) : (profileCreatedAt ? formatDate(profileCreatedAt) : '');
 
+  const handleOpenModal = (tab: 'followers' | 'following') => {
+    setModalTab(tab);
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    // Refresh counts when modal closes in case they changed
+    if (targetUserId) {
+      Promise.all([
+        getFollowers(targetUserId),
+        getFollowingForUser(targetUserId)
+      ]).then(([followers, following]) => {
+        setFollowersCount(followers.length);
+        setFollowingCount(following.length);
+      }).catch(error => {
+        console.error('Failed to refresh counts:', error);
+      });
+    }
+  };
+
   return (
-    <div className="profile-header">
-      <div className="profile-header-left">
-        <h1 className='profile-name'><span className="profile-name-at">@</span>{displayUsername}</h1>
-        {displayDate && (
-          <span className="profile-creation-date">
-            <i className="bi bi-calendar"></i>Joined {displayDate}
-          </span>
-        )}
-      </div>
+    <>
+      <div className="profile-header">
+        <div className="profile-header-left">
+          <h1 className='profile-name'><span className="profile-name-at">@</span>{displayUsername}</h1>
+          {displayDate && (
+            <span className="profile-creation-date">
+              <i className="bi bi-calendar"></i>Joined {displayDate}
+            </span>
+          )}
+          <div className="profile-stats">
+            <button 
+              className="profile-stat-button"
+              onClick={() => handleOpenModal('followers')}
+            >
+              <strong>{followersCount !== null ? followersCount : '...'}</strong> Followers
+            </button>
+            <button 
+              className="profile-stat-button"
+              onClick={() => handleOpenModal('following')}
+            >
+              <strong>{followingCount !== null ? followingCount : '...'}</strong> Following
+            </button>
+          </div>
+        </div>
       <div className="profile-header-right">
         {isOwnProfile ? (
           <>
@@ -169,5 +225,15 @@ export default function DisplayProfileHeader({
         )}
       </div>
     </div>
+    {targetUserId && (
+      <FollowersFollowingModal
+        userId={targetUserId}
+        username={displayUsername}
+        isOpen={modalOpen}
+        initialTab={modalTab}
+        onClose={handleCloseModal}
+      />
+    )}
+    </>
   );
 }
