@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type NavigationProps from '../interfaces/NavigationProps';
 import type Post from '../interfaces/Post';
-import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost } from '../utils/postsApi';
+import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost, deletePost } from '../utils/postsApi';
 import { getCurrentUserId } from '../utils/api';
 import { getLikeCount, checkIfLiked, likePost, unlikePost } from '../utils/likesApi';
 import '../styles/displayfeed.css';
@@ -11,14 +11,18 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 interface PostCardProps {
   post: Post;
   authorId?: number;
+  onPostDeleted?: () => void;
 }
 
-function PostCard({ post, authorId }: PostCardProps) {
+function PostCard({ post, authorId, onPostDeleted }: PostCardProps) {
   const [likeCount, setLikeCount] = useState<string>(post.likesCount);
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isToggling, setIsToggling] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const postId = parseInt(post.id, 10);
+  const currentUserId = getCurrentUserId();
+  const isOwnPost = currentUserId !== null && post.authorId === currentUserId;
 
   useEffect(() => {
     async function fetchLikeData() {
@@ -73,6 +77,23 @@ function PostCard({ post, authorId }: PostCardProps) {
     }
   };
 
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (isDeleting || !isOwnPost) return;
+
+    setIsDeleting(true);
+    try {
+      await deletePost(postId);
+      if (onPostDeleted) {
+        onPostDeleted();
+      }
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
@@ -113,6 +134,16 @@ function PostCard({ post, authorId }: PostCardProps) {
             <span className="post-likes">{likeCount}</span>
           </a>
         </div>
+        {isOwnPost && (
+          <button
+            className="post-delete-button"
+            onClick={handleDelete}
+            disabled={isDeleting}
+            title="Delete post"
+          >
+            <i className="bi bi-trash"></i>
+          </button>
+        )}
       </div>
 
     </article>
@@ -128,6 +159,11 @@ export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteTrigger, setDeleteTrigger] = useState(0);
+
+  const handlePostDeleted = () => {
+    setDeleteTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     async function fetchPosts() {
@@ -168,7 +204,7 @@ export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId
     }
 
     fetchPosts();
-  }, [currentPath, refreshTrigger, profileUserId]);
+  }, [currentPath, refreshTrigger, profileUserId, deleteTrigger]);
 
   if (loading) {
     return <div className="feed-placeholder">Loading posts...</div>;
@@ -185,7 +221,12 @@ export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId
   return (
     <div className="feed-container">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} authorId={post.authorId} />
+        <PostCard 
+          key={post.id} 
+          post={post} 
+          authorId={post.authorId}
+          onPostDeleted={handlePostDeleted}
+        />
       ))}
     </div>
   );

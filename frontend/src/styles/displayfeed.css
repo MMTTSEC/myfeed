@@ -64,6 +64,28 @@
   color: var(--color-white);
 }
 
+.feed-container article.post-card .post-footer .post-delete-button {
+  background: none;
+  border: none;
+  color: var(--color-gray);
+  cursor: pointer;
+  padding: var(--spacing-small);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  font-size: 18px;
+}
+
+.feed-container article.post-card .post-footer .post-delete-button:hover {
+  color: var(--color-red);
+}
+
+.feed-container article.post-card .post-footer .post-delete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .feed-container article.post-card .post-content {
   width: 100%;
   background-color: var(--color-background-tertiary);
@@ -78,6 +100,8 @@
   
   display: flex;
   flex-direction: row-reverse;
+  align-items: center;
+  gap: var(--spacing-big);
 }
 
 .feed-container article.post-card .post-footer .post-likes-container .toggle-likes {

@@ -120,6 +120,24 @@ export async function getPostById(id: number): Promise<PostResponse> {
 }
 
 /**
+ * Delete a post
+ */
+export async function deletePost(id: number): Promise<void> {
+  const response = await fetch(`/api/Posts/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Failed to delete post: ${response.status}`);
+  }
+}
+
+/**
  * Map backend PostResponse to frontend Post format
  */
 export function mapPostResponseToPost(response: PostResponse): Post {
