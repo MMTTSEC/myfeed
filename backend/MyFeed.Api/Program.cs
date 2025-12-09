@@ -12,8 +12,8 @@ using System.Text;
 using System.IO;
 using MyFeed.Api.Hubs;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Threading.Tasks;
+using MyFeed.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -133,6 +133,24 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
+
+// Delete and recreate database on every startup, then seed with data
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+    var postRepo = scope.ServiceProvider.GetRequiredService<IPostRepository>();
+    var likeRepo = scope.ServiceProvider.GetRequiredService<ILikeRepository>();
+    var followRepo = scope.ServiceProvider.GetRequiredService<IFollowRepository>();
+    var dmRepo = scope.ServiceProvider.GetRequiredService<IDirectMessageRepository>();
+
+    dbContext.Database.EnsureDeleted();
+    dbContext.Database.Migrate();
+
+    // Seed the database with dummy data
+    var seeder = new DatabaseSeeder(dbContext, userRepo, postRepo, likeRepo, followRepo, dmRepo);
+    await seeder.SeedAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
