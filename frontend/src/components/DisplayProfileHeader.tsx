@@ -129,13 +129,6 @@ export default function DisplayProfileHeader({
     }
   };
 
-  const handleDeleteAccount = () => {
-    // TODO: Implement delete account functionality
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      console.log('Delete account not yet implemented');
-    }
-  };
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Unknown';
     const date = new Date(dateString);
@@ -193,15 +186,7 @@ export default function DisplayProfileHeader({
         </div>
       <div className="profile-header-right">
         {isOwnProfile ? (
-          <>
-            <button 
-              className="profile-action button-delete-account"
-              onClick={handleDeleteAccount}
-            >
-              <i className="bi bi-exclamation-triangle"></i>
-              Delete Account
-            </button>
-          </>
+          null
         ) : (
           <>
             <button 
