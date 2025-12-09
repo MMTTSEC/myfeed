@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getConversation, type MessageResponse } from '../utils/messagesApi';
 import { getCurrentUserId } from '../utils/api';
+import { HubConnection } from '@microsoft/signalr';
+import { createChatConnection, startConnection, stopConnection } from '../utils/signalrClient';
 import '../styles/displaymessages.css';
 
 interface MessageCardProps {
@@ -72,6 +74,7 @@ export default function DisplayMessages({ selectedUserId, refreshTrigger }: Disp
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentUserId = getCurrentUserId();
+  const connectionRef = useRef<HubConnection | null>(null);
 
   useEffect(() => {
     async function fetchMessages() {
@@ -109,6 +112,58 @@ export default function DisplayMessages({ selectedUserId, refreshTrigger }: Disp
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // SignalR: subscribe to real-time messages for active conversation
+  useEffect(() => {
+    if (!selectedUserId || !currentUserId) {
+      // Stop any existing connection when no conversation is selected
+      if (connectionRef.current) {
+        stopConnection(connectionRef.current);
+        connectionRef.current = null;
+      }
+      return;
+    }
+
+    let isMounted = true;
+
+    async function connect() {
+      if (!connectionRef.current) {
+        connectionRef.current = createChatConnection();
+      }
+
+      const connection = connectionRef.current;
+
+      connection.off('messageReceived');
+      connection.on('messageReceived', (payload: MessageResponse) => {
+        if (!isMounted) return;
+        // Only append if message belongs to the active conversation
+        const isForConversation =
+          (payload.senderId === currentUserId && payload.receiverId === selectedUserId) ||
+          (payload.senderId === selectedUserId && payload.receiverId === currentUserId);
+
+        if (isForConversation) {
+          setMessages((prev) => [...prev, payload]);
+        }
+      });
+
+      try {
+        await startConnection(connection);
+      } catch (err) {
+        console.error('Failed to start SignalR connection', err);
+      }
+    }
+
+    connect();
+
+    return () => {
+      isMounted = false;
+      if (connectionRef.current) {
+        connectionRef.current.off('messageReceived');
+        stopConnection(connectionRef.current);
+        connectionRef.current = null;
+      }
+    };
+  }, [selectedUserId, currentUserId]);
 
   if (!selectedUserId) {
     return (
