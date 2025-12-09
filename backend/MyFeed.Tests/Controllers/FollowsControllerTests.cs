@@ -8,20 +8,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using MyFeed.Domain.Entities;
 
 namespace MyFeed.Tests.Controllers
 {
     public class FollowsControllerTests
     {
+        private static FollowsController CreateController(Mock<IFollowService> followService, Mock<IUserService>? userService = null, int userId = 1)
+        {
+            var controller = new FollowsController(followService.Object, (userService ?? new Mock<IUserService>()).Object);
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId.ToString()) }))
+                }
+            };
+            return controller;
+        }
+
         [Fact]
         public async Task FollowUser_ValidData_ReturnsOk()
         {
             // Arrange
             var mockFollowService = new Mock<IFollowService>();
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
             var request = new FollowUserRequest
             {
-                FollowerId = 1,
                 FolloweeId = 2
             };
 
@@ -43,10 +58,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.FollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Follower not found."));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
             var request = new FollowUserRequest
             {
-                FollowerId = 999,
                 FolloweeId = 2
             };
 
@@ -67,10 +81,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.FollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Followee not found."));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
             var request = new FollowUserRequest
             {
-                FollowerId = 1,
                 FolloweeId = 999
             };
 
@@ -91,10 +104,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.FollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Already following this user."));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
             var request = new FollowUserRequest
             {
-                FollowerId = 1,
                 FolloweeId = 2
             };
 
@@ -115,10 +127,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.FollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new ArgumentException("A user cannot follow themselves."));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
             var request = new FollowUserRequest
             {
-                FollowerId = 1,
                 FolloweeId = 1
             };
 
@@ -139,10 +150,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.FollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("Unexpected error"));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
             var request = new FollowUserRequest
             {
-                FollowerId = 1,
                 FolloweeId = 2
             };
 
@@ -159,10 +169,10 @@ namespace MyFeed.Tests.Controllers
         {
             // Arrange
             var mockFollowService = new Mock<IFollowService>();
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
 
             // Act
-            var result = await controller.UnfollowUser(followerId: 1, followeeId: 2);
+            var result = await controller.UnfollowUser(followeeId: 2);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -178,10 +188,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UnfollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Follower not found."));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
 
             // Act
-            var result = await controller.UnfollowUser(followerId: 999, followeeId: 2);
+            var result = await controller.UnfollowUser(followeeId: 2);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -197,10 +207,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UnfollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Not following this user."));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
 
             // Act
-            var result = await controller.UnfollowUser(followerId: 1, followeeId: 2);
+            var result = await controller.UnfollowUser(followeeId: 2);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -216,10 +226,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UnfollowUserAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("Unexpected error"));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
 
             // Act
-            var result = await controller.UnfollowUser(followerId: 1, followeeId: 2);
+            var result = await controller.UnfollowUser(followeeId: 2);
 
             // Assert
             var serverError = Assert.IsType<ObjectResult>(result);
@@ -231,12 +241,16 @@ namespace MyFeed.Tests.Controllers
         {
             // Arrange
             var mockFollowService = new Mock<IFollowService>();
+            var mockUserService = new Mock<IUserService>();
             var followeeIds = new List<int> { 2, 3, 4 };
             mockFollowService
                 .Setup(s => s.GetFollowingAsync(1))
                 .ReturnsAsync(followeeIds);
 
-            var controller = new FollowsController(mockFollowService.Object);
+            mockUserService.Setup(s => s.GetUserByIdAsync(It.IsAny<int>()))
+                .ReturnsAsync((int id) => new User($"user{id}", "hash") { Id = id });
+
+            var controller = CreateController(mockFollowService, mockUserService, userId: 1);
 
             // Act
             var result = await controller.GetFollowing(userId: 1);
@@ -244,11 +258,8 @@ namespace MyFeed.Tests.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
-            var returnedIds = Assert.IsAssignableFrom<IEnumerable<int>>(okResult.Value);
-            Assert.Equal(3, returnedIds.Count());
-            Assert.Contains(2, returnedIds);
-            Assert.Contains(3, returnedIds);
-            Assert.Contains(4, returnedIds);
+            var returnedUsers = Assert.IsAssignableFrom<IEnumerable<object>>(okResult.Value);
+            Assert.Equal(3, returnedUsers.Count());
         }
 
         [Fact]
@@ -260,7 +271,7 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.GetFollowingAsync(It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("User not found."));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
 
             // Act
             var result = await controller.GetFollowing(userId: 999);
@@ -279,7 +290,7 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.GetFollowingAsync(It.IsAny<int>()))
                 .ThrowsAsync(new Exception("Unexpected error"));
 
-            var controller = new FollowsController(mockFollowService.Object);
+            var controller = CreateController(mockFollowService);
 
             // Act
             var result = await controller.GetFollowing(userId: 1);
