@@ -22,7 +22,7 @@ namespace MyFeed.Tests.Application
 
             var svc = new UserService(userRepo.Object);
 
-            await svc.RegisterUserAsync("testuser", "password123");
+            await svc.RegisterUserAsync("testuser", "password123!");
 
             userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Once);
         }
@@ -34,7 +34,7 @@ namespace MyFeed.Tests.Application
             userRepo.Setup(x => x.GetByUsernameAsync("testuser")).ReturnsAsync(new User("testuser", "hash"));
             var svc = new UserService(userRepo.Object);
             await Assert.ThrowsAsync<InvalidOperationException>(() =>
-                svc.RegisterUserAsync("testuser", "password123")
+                svc.RegisterUserAsync("testuser", "password123!")
             );
             userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
         }
@@ -46,7 +46,7 @@ namespace MyFeed.Tests.Application
             var svc = new UserService(userRepo.Object);
 
             await Assert.ThrowsAsync<ArgumentException>(() =>
-                svc.RegisterUserAsync("", "password123")
+                svc.RegisterUserAsync("", "password123!")
             );
 
             userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
@@ -61,7 +61,33 @@ namespace MyFeed.Tests.Application
             string longUsername = new string('a', 51); 
 
             await Assert.ThrowsAsync<ArgumentException>(() =>
-                svc.RegisterUserAsync(longUsername, "password123")
+                svc.RegisterUserAsync(longUsername, "password123!")
+            );
+
+            userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RegisterUser_PasswordTooShort_ThrowsArgumentException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            var svc = new UserService(userRepo.Object);
+
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                svc.RegisterUserAsync("testuser", "short!")
+            );
+
+            userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task RegisterUser_PasswordMissingSpecial_ThrowsArgumentException()
+        {
+            var userRepo = new Mock<IUserRepository>();
+            var svc = new UserService(userRepo.Object);
+
+            await Assert.ThrowsAsync<ArgumentException>(() =>
+                svc.RegisterUserAsync("testuser", "password123")
             );
 
             userRepo.Verify(x => x.AddAsync(It.IsAny<User>()), Times.Never);
