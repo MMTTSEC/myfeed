@@ -10,6 +10,10 @@ using MyFeed.Infrastructure.Repositories;
 using System;
 using System.Text;
 using System.IO;
+using MyFeed.Api.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,6 +104,23 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(key)
     };
+
+    // Allow SignalR connections to send the token via query string for WebSockets/LongPolling
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+            {
+                context.Token = accessToken;
+            }
+
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // Application services
@@ -109,6 +130,7 @@ builder.Services.AddScoped<IDMService, DMService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<IFollowService, FollowService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -123,5 +145,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

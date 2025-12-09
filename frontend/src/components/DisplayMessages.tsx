@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getConversation, type MessageResponse } from '../utils/messagesApi';
 import { getCurrentUserId } from '../utils/api';
+import { HubConnection } from '@microsoft/signalr';
+import { createChatConnection, startConnection, stopConnection } from '../utils/signalrClient';
 import '../styles/displaymessages.css';
 
 interface MessageCardProps {
@@ -64,14 +66,16 @@ function MessageCard({ message, currentUserId }: MessageCardProps) {
 interface DisplayMessagesProps {
   selectedUserId?: number;
   refreshTrigger?: number;
+  connection?: HubConnection | null;
 }
 
-export default function DisplayMessages({ selectedUserId, refreshTrigger }: DisplayMessagesProps) {
+export default function DisplayMessages({ selectedUserId, refreshTrigger, connection: externalConnection }: DisplayMessagesProps) {
   const [messages, setMessages] = useState<MessageResponse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const currentUserId = getCurrentUserId();
+  const connectionRef = useRef<HubConnection | null>(null);
 
   useEffect(() => {
     async function fetchMessages() {
@@ -109,6 +113,48 @@ export default function DisplayMessages({ selectedUserId, refreshTrigger }: Disp
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // SignalR: subscribe to real-time messages for active conversation
+  useEffect(() => {
+    if (!selectedUserId || !currentUserId) {
+      return;
+    }
+
+    // Use external connection if provided, otherwise create our own
+    const connection = externalConnection || connectionRef.current;
+
+    if (!connection) {
+      return;
+    }
+
+    let isMounted = true;
+
+    // Subscribe to messages for this conversation
+    const handler = (payload: MessageResponse) => {
+      if (!isMounted) return;
+      // Only append if message belongs to the active conversation
+      const isForConversation =
+        (payload.senderId === currentUserId && payload.receiverId === selectedUserId) ||
+        (payload.senderId === selectedUserId && payload.receiverId === currentUserId);
+
+      if (isForConversation) {
+        setMessages((prev) => {
+          // Avoid duplicates
+          if (prev.some(m => m.id === payload.id)) {
+            return prev;
+          }
+          return [...prev, payload];
+        });
+      }
+    };
+
+    connection.on('messageReceived', handler);
+
+    return () => {
+      isMounted = false;
+      connection.off('messageReceived', handler);
+    };
+  }, [selectedUserId, currentUserId, externalConnection]);
 
   if (!selectedUserId) {
     return (

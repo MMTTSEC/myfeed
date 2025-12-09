@@ -1,0 +1,96 @@
+.notification-container {
+  position: fixed;
+  top: var(--spacing-large);
+  right: var(--spacing-large);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-standard);
+  pointer-events: none;
+}
+
+.notification-toast {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius-standard);
+  padding: var(--spacing-big);
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: var(--shadow-background);
+  cursor: pointer;
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-big);
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.notification-toast.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification-toast:hover {
+  background-color: var(--color-gray-dark);
+  border-color: var(--color-primary-hover);
+}
+
+.notification-avatar {
+  background-color: var(--color-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-background);
+}
+
+.notification-avatar strong {
+  font-size: var(--font-size-subheader);
+  color: var(--color-white);
+  text-shadow: var(--shadow-text-avatar);
+}
+
+.notification-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-sender {
+  font-weight: 600;
+  color: var(--color-primary);
+  font-size: var(--font-size-text);
+  margin-bottom: var(--spacing-small);
+}
+
+.notification-message {
+  color: var(--color-white);
+  font-size: var(--font-size-misc);
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.notification-close {
+  background: none;
+  border: none;
+  color: var(--color-gray);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.2s ease;
+}
+
+.notification-close:hover {
+  color: var(--color-white);
+}
+

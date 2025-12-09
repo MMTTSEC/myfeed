@@ -17,7 +17,7 @@ namespace MyFeed.Application.Services
             _dmRepo = dmRepo;
             _userRepo = userRepo;
         }
-        public async Task SendDMAsync(int senderId, int receiverId, string content)
+        public async Task<DM> SendDMAsync(int senderId, int receiverId, string content)
         {
             var sender = await _userRepo.GetByIdAsync(senderId);
             if (sender == null)
@@ -28,6 +28,7 @@ namespace MyFeed.Application.Services
             // Domain entity enforces content rules
             var dm = new DM(senderId, receiverId, content);
             await _dmRepo.AddAsync(dm);
+            return dm;
         }
 
         public async Task<IEnumerable<DM>> GetConversationAsync(int userId, int otherUserId)
