@@ -26,10 +26,6 @@ export function useChatNotifications(activeConversationUserId?: number) {
       notificationHandler = (payload: MessageResponse) => {
         if (!isMounted) return;
 
-        console.log('[Notification Hook] Message received:', payload);
-        console.log('[Notification Hook] Current user ID:', currentUserId);
-        console.log('[Notification Hook] Active conversation user ID:', activeConversationUserId);
-
         // Only show notification if:
         // 1. Message is for current user (they are the receiver)
         // 2. Message is NOT from the currently active conversation
@@ -38,23 +34,15 @@ export function useChatNotifications(activeConversationUserId?: number) {
           activeConversationUserId !== undefined &&
           (payload.senderId === activeConversationUserId || payload.receiverId === activeConversationUserId);
 
-        console.log('[Notification Hook] Is for current user:', isForCurrentUser);
-        console.log('[Notification Hook] Is from active conversation:', isFromActiveConversation);
-
         if (isForCurrentUser && !isFromActiveConversation) {
-          console.log('[Notification Hook] Adding notification');
           // Add notification
           setNotifications((prev) => {
             // Avoid duplicates
             if (prev.some(n => n.id === payload.id)) {
-              console.log('[Notification Hook] Duplicate notification, skipping');
               return prev;
             }
-            console.log('[Notification Hook] New notification added, total:', prev.length + 1);
             return [...prev, payload];
           });
-        } else {
-          console.log('[Notification Hook] Notification not shown (not for user or from active conversation)');
         }
       };
 
