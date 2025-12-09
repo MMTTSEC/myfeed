@@ -17,9 +17,14 @@
 }
 
 .messages-container article.message-card {
-  width: 100%;
+  max-width: 85%;
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
+}
+
+.messages-container article.message-card.your-message {
+  align-self: flex-end;
 }
 
 .messages-container article.message-card .message-header {
@@ -98,7 +103,8 @@
 
 /* Receiver messages - white background */
 .messages-container article.message-card:not(.your-message) .message-content {
-  width: 100%;
+  display: inline-block;
+  max-width: 80%;
   background-color: var(--color-white) !important;
   border-radius: var(--border-radius-standard);
   padding: var(--spacing-standard) var(--spacing-big);
@@ -109,7 +115,8 @@
 
 /* Sender messages - green background */
 .messages-container article.message-card.your-message .message-content {
-  width: 100%;
+  display: inline-block;
+  max-width: 80%;
   background-color: var(--color-primary) !important;
   color: var(--color-white) !important;
   text-shadow: var(--shadow-text);
