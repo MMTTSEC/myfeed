@@ -135,4 +135,8 @@
     justify-content: center;
     margin-left: 0;
   }
+
+  main section.center-column .messages-container article.message-card {
+    max-width: 100%;
+  }
 }
