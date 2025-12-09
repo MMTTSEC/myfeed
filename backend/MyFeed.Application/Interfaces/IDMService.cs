@@ -6,7 +6,7 @@ namespace MyFeed.Application.Interfaces
 {
     public interface IDMService
     {
-        Task SendDMAsync(int senderId, int receiverId, string content);
+        Task<DM> SendDMAsync(int senderId, int receiverId, string content);
         Task<IEnumerable<DM>> GetConversationAsync(int userId, int otherUserId);
     }
 }

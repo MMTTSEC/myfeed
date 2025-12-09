@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Application.Interfaces;
-using MyFeed.Application.Services;
 using MyFeed.Api.Extensions;
 using System;
 using System.Collections.Generic;
+using MyFeed.Api.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MyFeed.Api.Controllers;
 
@@ -15,11 +16,13 @@ public class DirectMessagesController : ControllerBase
 {
     private readonly IDMService _dmService;
     private readonly IUserService _userService;
+    private readonly IHubContext<ChatHub> _hubContext;
 
-    public DirectMessagesController(IDMService dmService, IUserService userService)
+    public DirectMessagesController(IDMService dmService, IUserService userService, IHubContext<ChatHub> hubContext)
     {
         _dmService = dmService;
         _userService = userService;
+        _hubContext = hubContext;
     }
 
     [HttpPost]
@@ -28,8 +31,26 @@ public class DirectMessagesController : ControllerBase
         try
         {
             var senderId = HttpContext.GetCurrentUserIdRequired();
-            await _dmService.SendDMAsync(senderId, request.ReceiverId, request.Message);
-            return Ok(new { message = "DM sent successfully" });
+            var dm = await _dmService.SendDMAsync(senderId, request.ReceiverId, request.Message);
+
+            var sender = await _userService.GetUserByIdAsync(dm.SenderUserId);
+            var receiver = await _userService.GetUserByIdAsync(dm.ReceiverUserId);
+
+            var dto = new
+            {
+                id = dm.Id,
+                senderId = dm.SenderUserId,
+                sender = sender?.Username ?? "Unknown",
+                receiverId = dm.ReceiverUserId,
+                receiver = receiver?.Username ?? "Unknown",
+                content = dm.Message,
+                createdAt = dm.CreatedAt
+            };
+
+            await _hubContext.Clients.Groups(dm.SenderUserId.ToString(), dm.ReceiverUserId.ToString())
+                .SendAsync("messageReceived", dto);
+
+            return Ok(dto);
         }
         catch (InvalidOperationException ex)
         {

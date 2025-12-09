@@ -1,21 +1,29 @@
 ﻿using Moq;
 using Microsoft.AspNetCore.Mvc;
 using MyFeed.Api.Controllers;
-using MyFeed.Application.Services;
 using MyFeed.Application.Interfaces;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using MyFeed.Api.Hubs;
+using Microsoft.AspNetCore.SignalR;
+using MyFeed.Domain.Entities;
 
 namespace MyFeed.Tests.Controllers
 {
     public class DirectMessagesControllerTests
     {
-        private static DirectMessagesController CreateController(Mock<IDMService> dmService, Mock<IUserService>? userService = null, int userId = 1)
+        private static DirectMessagesController CreateController(Mock<IDMService> dmService, Mock<IUserService>? userService = null, Mock<IHubContext<ChatHub>>? hubContext = null, int userId = 1, IClientProxy? clientProxy = null)
         {
-            var controller = new DirectMessagesController(dmService.Object, (userService ?? new Mock<IUserService>()).Object);
+            var hub = hubContext ?? new Mock<IHubContext<ChatHub>>();
+            var clients = new Mock<IHubClients>();
+            var proxy = clientProxy ?? new Mock<IClientProxy>().Object;
+            clients.Setup(c => c.Groups(It.IsAny<string[]>())).Returns(proxy);
+            hub.Setup(h => h.Clients).Returns(clients.Object);
+
+            var controller = new DirectMessagesController(dmService.Object, (userService ?? new Mock<IUserService>()).Object, hub.Object);
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext
@@ -31,7 +39,19 @@ namespace MyFeed.Tests.Controllers
         {
             // Arrange
             var mockDMService = new Mock<IDMService>();
-            var controller = CreateController(mockDMService);
+            var mockUserService = new Mock<IUserService>();
+            var mockHub = new Mock<IHubContext<ChatHub>>();
+            var clients = new Mock<IHubClients>();
+            var proxy = new Mock<IClientProxy>();
+            clients.Setup(c => c.Groups(It.IsAny<string[]>())).Returns(proxy.Object);
+            mockHub.Setup(h => h.Clients).Returns(clients.Object);
+
+            mockDMService.Setup(s => s.SendDMAsync(1, 2, "Hello!"))
+                .ReturnsAsync(new DM(1, 2, "Hello!") { Id = 10 });
+            mockUserService.Setup(s => s.GetUserByIdAsync(1)).ReturnsAsync(new User("sender", "hash") { Id = 1 });
+            mockUserService.Setup(s => s.GetUserByIdAsync(2)).ReturnsAsync(new User("receiver", "hash") { Id = 2 });
+
+            var controller = CreateController(mockDMService, mockUserService, mockHub, userId: 1, clientProxy: proxy.Object);
             var request = new SendDMRequest
             {
                 ReceiverId = 2,
