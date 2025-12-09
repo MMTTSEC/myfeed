@@ -15,6 +15,11 @@ export interface CreatePostRequest {
   body: string;
 }
 
+export interface UpdatePostRequest {
+  title: string;
+  body: string;
+}
+
 /**
  * Create a new post
  */
@@ -117,6 +122,43 @@ export async function getPostById(id: number): Promise<PostResponse> {
   }
 
   return await response.json();
+}
+
+/**
+ * Update a post
+ */
+export async function updatePost(id: number, title: string, body: string): Promise<void> {
+  const response = await fetch(`/api/Posts/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    },
+    body: JSON.stringify({ title, body } as UpdatePostRequest)
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Failed to update post: ${response.status}`);
+  }
+}
+
+/**
+ * Delete a post
+ */
+export async function deletePost(id: number): Promise<void> {
+  const response = await fetch(`/api/Posts/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      ...getAuthHeaders()
+    }
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || `Failed to delete post: ${response.status}`);
+  }
 }
 
 /**

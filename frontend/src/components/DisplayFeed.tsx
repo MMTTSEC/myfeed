@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import type NavigationProps from '../interfaces/NavigationProps';
 import type Post from '../interfaces/Post';
-import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost } from '../utils/postsApi';
+import { getAllPosts, getFeed, getPostsByUser, mapPostResponseToPost, deletePost, updatePost } from '../utils/postsApi';
 import { getCurrentUserId } from '../utils/api';
 import { getLikeCount, checkIfLiked, likePost, unlikePost } from '../utils/likesApi';
 import '../styles/displayfeed.css';
@@ -11,14 +11,22 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 interface PostCardProps {
   post: Post;
   authorId?: number;
+  onPostDeleted?: () => void;
+  onPostUpdated?: () => void;
 }
 
-function PostCard({ post, authorId }: PostCardProps) {
+function PostCard({ post, authorId, onPostDeleted, onPostUpdated }: PostCardProps) {
   const [likeCount, setLikeCount] = useState<string>(post.likesCount);
   const [isLiked, setIsLiked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isToggling, setIsToggling] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editContent, setEditContent] = useState(post.content);
+  const [isUpdating, setIsUpdating] = useState(false);
   const postId = parseInt(post.id, 10);
+  const currentUserId = getCurrentUserId();
+  const isOwnPost = currentUserId !== null && post.authorId === currentUserId;
 
   useEffect(() => {
     async function fetchLikeData() {
@@ -73,6 +81,58 @@ function PostCard({ post, authorId }: PostCardProps) {
     }
   };
 
+  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (isDeleting || !isOwnPost) return;
+
+    setIsDeleting(true);
+    try {
+      await deletePost(postId);
+      if (onPostDeleted) {
+        onPostDeleted();
+      }
+    } catch (error) {
+      console.error('Failed to delete post:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!isOwnPost) return;
+    setIsEditing(true);
+    setEditContent(post.content);
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsEditing(false);
+    setEditContent(post.content);
+  };
+
+  const handleSaveEdit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (isUpdating || !editContent.trim()) return;
+
+    setIsUpdating(true);
+    try {
+      const title = "test";
+      const body = editContent.trim();
+      await updatePost(postId, title, body);
+      setIsEditing(false);
+      if (onPostUpdated) {
+        onPostUpdated();
+      } else if (onPostDeleted) {
+        onPostDeleted();
+      }
+    } catch (error) {
+      console.error('Failed to update post:', error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
@@ -98,7 +158,35 @@ function PostCard({ post, authorId }: PostCardProps) {
       </div>
 
       <div className="post-content">
-        {post.content}
+        {isEditing ? (
+          <div className="post-edit-container">
+            <textarea
+              className="post-edit-textarea"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              disabled={isUpdating}
+              rows={3}
+            />
+            <div className="post-edit-actions">
+              <button
+                className="post-edit-save"
+                onClick={handleSaveEdit}
+                disabled={isUpdating || !editContent.trim()}
+              >
+                {isUpdating ? 'Saving...' : 'Save'}
+              </button>
+              <button
+                className="post-edit-cancel"
+                onClick={handleCancelEdit}
+                disabled={isUpdating}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          post.content
+        )}
       </div>
 
       <div className="post-footer">
@@ -113,6 +201,25 @@ function PostCard({ post, authorId }: PostCardProps) {
             <span className="post-likes">{likeCount}</span>
           </a>
         </div>
+        {isOwnPost && !isEditing && (
+          <>
+            <button
+              className="post-edit-button"
+              onClick={handleEdit}
+              title="Edit post"
+            >
+              <i className="bi bi-pencil"></i>
+            </button>
+            <button
+              className="post-delete-button"
+              onClick={handleDelete}
+              disabled={isDeleting}
+              title="Delete post"
+            >
+              <i className="bi bi-trash"></i>
+            </button>
+          </>
+        )}
       </div>
 
     </article>
@@ -128,6 +235,15 @@ export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [internalRefreshTrigger, setInternalRefreshTrigger] = useState(0);
+
+  const handlePostDeleted = () => {
+    setInternalRefreshTrigger(prev => prev + 1);
+  };
+
+  const handlePostUpdated = () => {
+    setInternalRefreshTrigger(prev => prev + 1);
+  };
 
   useEffect(() => {
     async function fetchPosts() {
@@ -168,7 +284,7 @@ export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId
     }
 
     fetchPosts();
-  }, [currentPath, refreshTrigger, profileUserId]);
+  }, [currentPath, refreshTrigger, profileUserId, internalRefreshTrigger]);
 
   if (loading) {
     return <div className="feed-placeholder">Loading posts...</div>;
@@ -185,7 +301,13 @@ export default function DisplayFeed({ currentPath, refreshTrigger, profileUserId
   return (
     <div className="feed-container">
       {posts.map((post) => (
-        <PostCard key={post.id} post={post} authorId={post.authorId} />
+        <PostCard 
+          key={post.id} 
+          post={post} 
+          authorId={post.authorId}
+          onPostDeleted={handlePostDeleted}
+          onPostUpdated={handlePostUpdated}
+        />
       ))}
     </div>
   );
