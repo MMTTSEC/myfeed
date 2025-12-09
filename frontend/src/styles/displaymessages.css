@@ -17,7 +17,7 @@
 }
 
 .messages-container article.message-card {
-  max-width: 85%;
+  max-width: 70%;
   display: flex;
   flex-direction: column;
   align-self: flex-start;
@@ -25,6 +25,8 @@
 
 .messages-container article.message-card.your-message {
   align-self: flex-end;
+  display: flex;
+  align-items: flex-end;
 }
 
 .messages-container article.message-card .message-header {
@@ -40,7 +42,6 @@
   flex-direction: row-reverse;
 }
 
-/* Received messages - dark gray avatar */
 .messages-container article.message-card:not(.your-message) .message-header figure.message-sender-avatar {
   background-color: var(--color-gray-dark) !important;
   box-shadow: var(--shadow-background);
@@ -54,7 +55,6 @@
   justify-content: center;
 }
 
-/* Sent messages - green avatar */
 .messages-container article.message-card.your-message .message-header figure.message-sender-avatar {
   background-color: var(--color-primary) !important;
   margin-right: 0;
@@ -87,7 +87,6 @@
   padding-right: 1px;
 }
 
-/* Received messages - white sender name */
 .messages-container article.message-card:not(.your-message) .message-header .message-info .message-sender {
   color: var(--color-white) !important;
 }
@@ -96,15 +95,12 @@
   color: var(--color-white) !important;
 }
 
-/* Sent messages - green "YOU" text */
 .messages-container article.message-card.your-message .message-header .message-info .message-sender {
   color: var(--color-primary) !important;
 }
 
-/* Receiver messages - white background */
 .messages-container article.message-card:not(.your-message) .message-content {
   display: inline-block;
-  max-width: 80%;
   background-color: var(--color-white) !important;
   border-radius: var(--border-radius-standard);
   padding: var(--spacing-standard) var(--spacing-big);
@@ -113,10 +109,8 @@
   margin-top: var(--spacing-standard);
 }
 
-/* Sender messages - green background */
 .messages-container article.message-card.your-message .message-content {
   display: inline-block;
-  max-width: 80%;
   background-color: var(--color-primary) !important;
   color: var(--color-white) !important;
   text-shadow: var(--shadow-text);

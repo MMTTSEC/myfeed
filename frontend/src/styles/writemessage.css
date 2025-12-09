@@ -32,6 +32,7 @@
 
 .write-message-container .write-message-form textarea {
   width: calc(100% - 110px);
+  min-height: 42px;
 }
 
 .write-message-container .write-message-form .char-count {

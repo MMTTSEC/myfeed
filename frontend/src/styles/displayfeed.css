@@ -203,6 +203,11 @@
   cursor: not-allowed;
 }
 
+.feed-container article.post-card button.post-edit-button .bi,
+.feed-container article.post-card button.post-delete-button .bi {
+  font-size: 20px;
+}
+
 .feed-container article.post-card .post-edit-cancel {
   background-color: transparent;
   color: var(--color-gray);
