@@ -1,8 +1,17 @@
+import { useNavigate } from 'react-router-dom';
 import type NavigationProps from '../interfaces/NavigationProps';
+import { logout } from '../utils/api';
 import '../styles/Navigation.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 export default function Navigation({ currentPath }: NavigationProps) {
+  const navigate = useNavigate();
+
+  const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    logout();
+    navigate('/');
+  };
 
   return <>
     <div className="left-column-container">
@@ -27,7 +36,7 @@ export default function Navigation({ currentPath }: NavigationProps) {
           </li>
 
           <li className="nav-item logout-button">
-            <a href="#"><i className="bi bi-box-arrow-right"></i>Sign Out</a>
+            <a href="#" onClick={handleLogout}><i className="bi bi-box-arrow-right"></i>Sign Out</a>
           </li>
 
         </ul>

@@ -31,6 +31,13 @@ export function getCurrentUserId(): number | null {
   }
 }
 
+/**
+ * Logout: Remove JWT token from localStorage
+ */
+export function logout(): void {
+  localStorage.removeItem('token');
+}
+
 export interface UserInfo {
   id: number;
   username: string;
