@@ -3,6 +3,7 @@ using MyFeed.Domain.Entities;
 using MyFeed.Application.Interfaces;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace MyFeed.Application.Services
 {
@@ -19,6 +20,15 @@ namespace MyFeed.Application.Services
 
         public async Task RegisterUserAsync(string username, string password)
         {
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password cannot be empty.", nameof(password));
+
+            if (password.Length < 8)
+                throw new ArgumentException("Password must be at least 8 characters long.", nameof(password));
+
+            if (!password.Any(ch => !char.IsLetterOrDigit(ch)))
+                throw new ArgumentException("Password must contain at least one special character.", nameof(password));
+
             // Domain entity will validate username (empty, too long, etc.)
             // But we check for duplicates first
             var existingUser = await _userRepo.GetByUsernameAsync(username);

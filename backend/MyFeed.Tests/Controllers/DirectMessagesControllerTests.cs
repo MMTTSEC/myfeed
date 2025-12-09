@@ -6,20 +6,34 @@ using MyFeed.Application.Interfaces;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace MyFeed.Tests.Controllers
 {
     public class DirectMessagesControllerTests
     {
+        private static DirectMessagesController CreateController(Mock<IDMService> dmService, Mock<IUserService>? userService = null, int userId = 1)
+        {
+            var controller = new DirectMessagesController(dmService.Object, (userService ?? new Mock<IUserService>()).Object);
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId.ToString()) }))
+                }
+            };
+            return controller;
+        }
+
         [Fact]
         public async Task SendDM_ValidData_ReturnsOk()
         {
             // Arrange
             var mockDMService = new Mock<IDMService>();
-            var controller = new DirectMessagesController(mockDMService.Object);
+            var controller = CreateController(mockDMService);
             var request = new SendDMRequest
             {
-                SenderId = 1,
                 ReceiverId = 2,
                 Message = "Hello!"
             };
@@ -42,10 +56,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.SendDMAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ThrowsAsync(new InvalidOperationException("Sender not found."));
 
-            var controller = new DirectMessagesController(mockDMService.Object);
+            var controller = CreateController(mockDMService);
             var request = new SendDMRequest
             {
-                SenderId = 999,
                 ReceiverId = 2,
                 Message = "Hello!"
             };
@@ -68,10 +81,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.SendDMAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ThrowsAsync(new InvalidOperationException("Receiver not found."));
 
-            var controller = new DirectMessagesController(mockDMService.Object);
+            var controller = CreateController(mockDMService);
             var request = new SendDMRequest
             {
-                SenderId = 1,
                 ReceiverId = 999,
                 Message = "Hello!"
             };
@@ -93,10 +105,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.SendDMAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ThrowsAsync(new ArgumentException("A user cannot send a DM to themselves."));
 
-            var controller = new DirectMessagesController(mockDMService.Object);
+            var controller = CreateController(mockDMService);
             var request = new SendDMRequest
             {
-                SenderId = 1,
                 ReceiverId = 1,
                 Message = "Hello!"
             };
@@ -118,10 +129,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.SendDMAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ThrowsAsync(new ArgumentException("DM message cannot be empty."));
 
-            var controller = new DirectMessagesController(mockDMService.Object);
+            var controller = CreateController(mockDMService);
             var request = new SendDMRequest
             {
-                SenderId = 1,
                 ReceiverId = 2,
                 Message = ""
             };
@@ -143,10 +153,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.SendDMAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ThrowsAsync(new ArgumentException("DM message cannot be longer than 1000 characters."));
 
-            var controller = new DirectMessagesController(mockDMService.Object);
+            var controller = CreateController(mockDMService);
             var request = new SendDMRequest
             {
-                SenderId = 1,
                 ReceiverId = 2,
                 Message = new string('a', 1001)
             };
@@ -168,10 +177,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.SendDMAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Unexpected error"));
 
-            var controller = new DirectMessagesController(mockDMService.Object);
+            var controller = CreateController(mockDMService);
             var request = new SendDMRequest
             {
-                SenderId = 1,
                 ReceiverId = 2,
                 Message = "Hello!"
             };

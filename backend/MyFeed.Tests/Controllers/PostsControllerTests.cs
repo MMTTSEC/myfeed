@@ -5,20 +5,35 @@ using MyFeed.Api.Controllers;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+using MyFeed.Api.Extensions;
 
 namespace MyFeed.Tests.Controllers
 {
     public class PostsControllerTests
     {
+        private static PostsController CreateController(Mock<IPostService> postService, Mock<IUserService>? userService = null, int userId = 1)
+        {
+            var controller = new PostsController(postService.Object, (userService ?? new Mock<IUserService>()).Object);
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId.ToString()) }))
+                }
+            };
+            return controller;
+        }
+
         [Fact]
         public async Task CreatePost_ValidData_ReturnsCreated()
         {
             // Arrange
             var mockPostService = new Mock<IPostService>();
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
             var request = new CreatePostRequest
             {
-                AuthorId = 1,
                 Title = "Hello",
                 Body = "World"
             };
@@ -41,10 +56,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.CreatePostAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new InvalidOperationException("Author not found."));
 
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
             var request = new CreatePostRequest
             {
-                AuthorId = 123,
                 Title = "Hello",
                 Body = "World"
             };
@@ -66,10 +80,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.CreatePostAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new ArgumentException("Title cannot be empty."));
 
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
             var request = new CreatePostRequest
             {
-                AuthorId = 1,
                 Title = "",
                 Body = "Body"
             };
@@ -91,10 +104,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.CreatePostAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new Exception("Unexpected"));
 
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
             var request = new CreatePostRequest
             {
-                AuthorId = 1,
                 Title = "Title",
                 Body = "Body"
             };
@@ -112,10 +124,9 @@ namespace MyFeed.Tests.Controllers
         {
             // Arrange
             var mockPostService = new Mock<IPostService>();
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
             var request = new UpdatePostRequest
             {
-                AuthorId = 1,
                 Title = "New",
                 Body = "Body"
             };
@@ -137,10 +148,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UpdatePostAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new KeyNotFoundException());
 
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
             var request = new UpdatePostRequest
             {
-                AuthorId = 1,
                 Title = "New",
                 Body = "Body"
             };
@@ -161,10 +171,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UpdatePostAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ThrowsAsync(new InvalidOperationException("Only the author can edit this post."));
 
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService, userService: null, userId: 2);
             var request = new UpdatePostRequest
             {
-                AuthorId = 2,
                 Title = "New",
                 Body = "Body"
             };
@@ -182,10 +191,10 @@ namespace MyFeed.Tests.Controllers
         {
             // Arrange
             var mockPostService = new Mock<IPostService>();
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
 
             // Act
-            var result = await controller.DeletePost(10, authorId: 1);
+            var result = await controller.DeletePost(10);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -201,10 +210,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.DeletePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new KeyNotFoundException());
 
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService);
 
             // Act
-            var result = await controller.DeletePost(10, authorId: 1);
+            var result = await controller.DeletePost(10);
 
             // Assert
             Assert.IsType<NotFoundResult>(result);
@@ -219,10 +228,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.DeletePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Only the author can delete this post."));
 
-            var controller = new PostsController(mockPostService.Object);
+            var controller = CreateController(mockPostService, userService: null, userId: 2);
 
             // Act
-            var result = await controller.DeletePost(10, authorId: 2);
+            var result = await controller.DeletePost(10);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);

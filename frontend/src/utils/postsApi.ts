@@ -123,10 +123,8 @@ export async function getPostById(id: number): Promise<PostResponse> {
  * Map backend PostResponse to frontend Post format
  */
 export function mapPostResponseToPost(response: PostResponse): Post {
-  // Combine title and body into content
-  const content = response.title && response.body 
-    ? `${response.title}\n${response.body}`.trim()
-    : response.body || response.title || '';
+  // Show only the body to keep the placeholder title hidden from users
+  const content = (response.body || '').trim() || (response.title || '').trim();
   
   return {
     id: response.id.toString(),

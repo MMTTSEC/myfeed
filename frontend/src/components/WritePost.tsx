@@ -64,10 +64,9 @@ export default function WritePost({ onPostCreated }: WritePostProps) {
     setSuccess(false);
 
     try {
-      // Use first 100 chars as title, rest as body
-      const title = text.slice(0, 100).trim();
-      const body = text.slice(100).trim() || title;
-      
+      // Backend requires a non-empty title; use a fixed placeholder
+      const title = "test";
+      const body = text.trim();
       await createPost(title, body);
       
       setText("");

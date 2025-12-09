@@ -6,20 +6,34 @@ using MyFeed.Application.Interfaces;
 using System;
 using System.Threading.Tasks;
 using Xunit;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace MyFeed.Tests.Controllers
 {
     public class LikesControllerTests
     {
+        private static LikesController CreateController(Mock<ILikeService> likeService, int userId = 1)
+        {
+            var controller = new LikesController(likeService.Object);
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId.ToString()) }))
+                }
+            };
+            return controller;
+        }
+
         [Fact]
         public async Task LikePost_ValidData_ReturnsOk()
         {
             // Arrange
             var mockLikeService = new Mock<ILikeService>();
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
             var request = new LikePostRequest
             {
-                UserId = 1,
                 PostId = 2
             };
 
@@ -41,10 +55,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.LikePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("User not found."));
 
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
             var request = new LikePostRequest
             {
-                UserId = 999,
                 PostId = 2
             };
 
@@ -65,10 +78,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.LikePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Post not found."));
 
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
             var request = new LikePostRequest
             {
-                UserId = 1,
                 PostId = 999
             };
 
@@ -89,10 +101,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.LikePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Post already liked."));
 
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
             var request = new LikePostRequest
             {
-                UserId = 1,
                 PostId = 2
             };
 
@@ -113,10 +124,9 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.LikePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("Unexpected error"));
 
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
             var request = new LikePostRequest
             {
-                UserId = 1,
                 PostId = 2
             };
 
@@ -133,10 +143,10 @@ namespace MyFeed.Tests.Controllers
         {
             // Arrange
             var mockLikeService = new Mock<ILikeService>();
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
 
             // Act
-            var result = await controller.UnlikePost(userId: 1, postId: 2);
+            var result = await controller.UnlikePost(postId: 2);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
@@ -152,10 +162,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UnlikePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("User not found."));
 
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
 
             // Act
-            var result = await controller.UnlikePost(userId: 999, postId: 2);
+            var result = await controller.UnlikePost(postId: 2);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -171,10 +181,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UnlikePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new InvalidOperationException("Like does not exist."));
 
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
 
             // Act
-            var result = await controller.UnlikePost(userId: 1, postId: 2);
+            var result = await controller.UnlikePost(postId: 2);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);
@@ -190,10 +200,10 @@ namespace MyFeed.Tests.Controllers
                 .Setup(s => s.UnlikePostAsync(It.IsAny<int>(), It.IsAny<int>()))
                 .ThrowsAsync(new Exception("Unexpected error"));
 
-            var controller = new LikesController(mockLikeService.Object);
+            var controller = CreateController(mockLikeService);
 
             // Act
-            var result = await controller.UnlikePost(userId: 1, postId: 2);
+            var result = await controller.UnlikePost(postId: 2);
 
             // Assert
             var serverError = Assert.IsType<ObjectResult>(result);

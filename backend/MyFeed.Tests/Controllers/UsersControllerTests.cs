@@ -17,6 +17,8 @@ namespace MyFeed.Tests.Controllers
             // Arrange
             var mockUserService = new Mock<IUserService>();
             var mockJwtService = new Mock<IJwtService>();
+            mockUserService.Setup(s => s.GetUserByUsernameAsync("testuser"))
+                .ReturnsAsync(new User("testuser", "hashed") { Id = 1 });
             var controller = new UsersController(mockUserService.Object, mockJwtService.Object);
             var request = new RegisterUserRequest { Username = "testuser", Password = "password123" };
 
@@ -52,7 +54,7 @@ namespace MyFeed.Tests.Controllers
         public async Task GetUserById_UserExists_ReturnsOk()
         {
             // Arrange
-            var user = new User("testuser", "hashedpassword123");
+            var user = new User("testuser", "hashedpassword123") { Id = 1 };
             var mockUserService = new Mock<IUserService>();
             mockUserService.Setup(s => s.GetUserByIdAsync(1)).ReturnsAsync(user);
             var mockJwtService = new Mock<IJwtService>();
@@ -64,8 +66,10 @@ namespace MyFeed.Tests.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
-            var returnedUser = Assert.IsType<User>(okResult.Value);
-            Assert.Equal("testuser", returnedUser.Username);
+            var returnedUser = okResult.Value!;
+            var userType = returnedUser.GetType();
+            Assert.Equal(1, (int)userType.GetProperty("id")!.GetValue(returnedUser)!);
+            Assert.Equal("testuser", (string)userType.GetProperty("username")!.GetValue(returnedUser)!);
         }
 
         [Fact]
@@ -88,7 +92,7 @@ namespace MyFeed.Tests.Controllers
         public async Task GetUserByUsername_UserExists_ReturnsOk()
         {
             // Arrange
-            var user = new User("testuser", "hashedpassword123");
+            var user = new User("testuser", "hashedpassword123") { Id = 2 };
             var mockUserService = new Mock<IUserService>();
             mockUserService.Setup(s => s.GetUserByUsernameAsync("testuser")).ReturnsAsync(user);
             var mockJwtService = new Mock<IJwtService>();
@@ -100,8 +104,10 @@ namespace MyFeed.Tests.Controllers
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, okResult.StatusCode);
-            var returnedUser = Assert.IsType<User>(okResult.Value);
-            Assert.Equal("testuser", returnedUser.Username);
+            var returnedUser = okResult.Value!;
+            var userType = returnedUser.GetType();
+            Assert.Equal(2, (int)userType.GetProperty("id")!.GetValue(returnedUser)!);
+            Assert.Equal("testuser", (string)userType.GetProperty("username")!.GetValue(returnedUser)!);
         }
 
         [Fact]

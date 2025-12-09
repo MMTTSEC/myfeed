@@ -27,7 +27,8 @@ public class PostsController : ControllerBase
         try
         {
             var userId = HttpContext.GetCurrentUserIdRequired();
-            await _postService.CreatePostAsync(userId, request.Title, request.Body);
+            var title = string.IsNullOrWhiteSpace(request.Title) ? "test" : request.Title;
+            await _postService.CreatePostAsync(userId, title, request.Body);
             return Created(string.Empty, null);
         }
         catch (InvalidOperationException ex)
